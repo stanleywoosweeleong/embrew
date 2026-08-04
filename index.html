@@ -211,6 +211,28 @@ label.fld > span{display:block;font-size:12.5px;font-weight:700;letter-spacing:.
 .result .mixname i{color:rgba(239,228,204,.6)}
 .rnote{font-size:12.5px;font-weight:500;color:rgba(239,228,204,.75);margin-top:10px;line-height:1.55}
 
+.fold{border:1px solid var(--line);border-radius:var(--r);background:var(--paper);overflow:hidden}
+.fold summary{list-style:none;cursor:pointer;padding:15px 16px;display:flex;
+  align-items:center;justify-content:space-between;gap:12px;font-size:17px;font-weight:800}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::marker{content:""}
+.fold summary i{flex:none;font-style:normal;font-weight:800;font-size:22px;line-height:1;
+  color:var(--gold);transition:transform .2s}
+.fold[open] summary{border-bottom:1px solid var(--line)}
+.fold[open] summary i{transform:rotate(45deg)}
+.fold summary small{display:block;font-size:11.5px;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--stone);margin-bottom:3px}
+.foldbody{padding:14px 16px 16px}
+.foldbody > * + *{margin-top:12px}
+.diag{list-style:none;margin:0;padding:0}
+.diag li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;
+  border-bottom:1px dashed var(--line);font-size:14px;font-weight:500}
+.diag li:last-child{border-bottom:0}
+.diag em{flex:none;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.06em;
+  padding:4px 9px;border-radius:99px;background:var(--wheat-2);color:#4A3418;
+  white-space:nowrap;margin-top:1px}
+.diag em.bad{background:#F3DBD2;color:#8C3418}
+.diag b{font-weight:800}
 ul.plain{margin:0;padding-left:18px;font-size:14px;font-weight:500}
 ul.plain li{margin-bottom:6px}
 a{color:var(--teal);word-break:break-all}
@@ -383,6 +405,41 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </section>
 
 <section>
+  <details class="fold">
+    <summary>
+      <span>
+        <small data-zh="万一失败" data-en="If it goes wrong">万一失败</small>
+        <span data-zh="发酵出问题" data-en="When a batch goes bad">发酵出问题</span>
+      </span>
+      <i aria-hidden="true">+</i>
+    </summary>
+    <div class="foldbody">
+      <ul class="diag">
+        <li><em data-zh="正常" data-en="Normal">正常</em><span data-zh="酸香、糖蜜甜味、表面有泡 —— 继续用。" data-en="Sour, sweet molasses smell, foam on top — carry on.">酸香、糖蜜甜味、表面有泡 —— 继续用。</span></li>
+        <li><em data-zh="可救" data-en="Fixable">可救</em><span data-zh="酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。" data-en="Alcohol smell, no bubbling: under-aerated. Stir hard daily — it usually recovers.">酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。</span></li>
+        <li><em data-zh="可救" data-en="Fixable">可救</em><span data-zh="表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。" data-en="White skin on top, or maggots: skim it, fit the netting properly — still usable for soil.">表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。</span></li>
+        <li><em class="bad" data-zh="要丢弃" data-en="Discard">要丢弃</em><span data-zh="表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。" data-en="Green, black or blue fuzzy mould on the surface: discard the tank. <b>Do not spray it</b> — spraying puts the spores in the air you breathe.">表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。</span></li>
+        <li><em class="bad" data-zh="要丢弃" data-en="Discard">要丢弃</em><span data-zh="臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。" data-en="Rotten-egg or rancid smell, black and slimy: it is finished. Don't put your head over the opening.">臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。</span></li>
+      </ul>
+
+      <div class="warn">
+        <b data-zh="绝对不可以" data-en="Never">绝对不可以</b>
+        <span data-zh="不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。" data-en="Never pour it into a river, drain, pond, near a well, or into a septic tank. It strips the oxygen out of the water and kills fish — and in Malaysia it is an offence under the Environmental Quality Act 1974.">不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。</span>
+      </div>
+
+      <p class="steptitle" data-zh="正确的处理方法" data-en="How to dispose of it">正确的处理方法</p>
+      <ul class="plain">
+        <li data-zh="稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。" data-en="Dilute at least 1:20 and spread thinly over a wide grassed or inter-row area, well away from water and wells. Never dump it all in one spot.">稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。</li>
+        <li data-zh="挑天气干的时候洒。大雨前洒等于直接流进河里。" data-en="Spread it in dry weather. Spreading before heavy rain just washes it into the river.">挑天气干的时候洒。大雨前洒等于直接流进河里。</li>
+        <li data-zh="或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。" data-en="Or pour it over plenty of dry material to compost — sawdust, dry leaves, chipped prunings, EFB. The dry matter soaks it up and holds the smell down.">或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。</li>
+        <li data-zh="酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。" data-en="If it is strongly acidic, stir in ground limestone or dolomite and leave it a day before spreading.">酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。</li>
+        <li data-zh="桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。" data-en="Rinse the tank and sun-dry it. Leftover sugar contaminates the next batch, and if you use bleach, rinse until there is no chlorine smell at all.">桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<section>
   <p class="eyebrow" data-zh="鸣谢" data-en="Acknowledgements">鸣谢</p>
   <div class="card">
     <ul class="plain">
@@ -411,7 +468,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 <script>
 "use strict";
-var CACHE_VERSION = "embrew-v1.4.2-20260804";
+var CACHE_VERSION = "embrew-v1.6.0-20260804";
 var NS = "embrew.";
 
 /* ── storage: real localStorage where allowed, memory fallback otherwise ── */
@@ -762,9 +819,10 @@ function applyLang(){
   for (var i = 0; i < nodes.length; i++){
     var n = nodes[i];
     var val = LANG === "zh" ? n.getAttribute("data-zh") : n.getAttribute("data-en");
-    var br = n.querySelector("a");
-    if (br){
+    if (n.querySelector("a")){
       n.childNodes[0].nodeValue = val;
+    } else if (val.indexOf("<") > -1){
+      n.innerHTML = val;
     } else {
       n.textContent = val;
     }
