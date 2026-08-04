@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2C1E0E">
+<title>益菌坊 EM Brew Lab</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="./icons/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="益菌坊">
+<meta name="description" content="有效微生物制作、发酵追踪与稀释计算 — Effective microbes brewing, fermentation tracking and dilution calculator for durian growers.">
+<style>
+:root{
+  --molasses:#2C1E0E;
+  --ink:#1E1409;
+  --wheat:#EFE4CC;
+  --wheat-2:#E0D2B2;
+  --paper:#FBF6EA;
+  --gold:#C8801A;
+  --gold-lite:#F0B84A;
+  --teal:#1F6E68;
+  --rust:#A83E22;
+  --stone:#7C7466;
+  --line:rgba(44,30,14,.16);
+  --r:14px;
+  --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background-color:var(--wheat);
+  background-image:
+    repeating-linear-gradient(90deg,rgba(44,30,14,.035) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(0deg,rgba(44,30,14,.035) 0 1px,transparent 1px 4px);
+  line-height:1.6;
+  font-size:16px;
+  font-weight:500;
+  padding-bottom:calc(64px + env(safe-area-inset-bottom,0px));
+  padding-left:env(safe-area-inset-left,0px);
+  padding-right:env(safe-area-inset-right,0px);
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+/* ── header ─────────────────────────── */
+header{
+  background:var(--molasses);
+  color:var(--wheat);
+  padding:calc(20px + env(safe-area-inset-top,0px)) 0 18px;
+  border-bottom:4px solid var(--gold);
+}
+.hrow{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+h1{
+  font-size:30px;line-height:1.05;margin:0;font-weight:800;
+  letter-spacing:-.02em;
+}
+h1 .en{display:block;font-size:12px;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold-lite);margin-top:7px}
+.sub{margin:10px 0 0;font-size:13px;font-weight:500;color:rgba(239,228,204,.78)}
+.langbtn{
+  flex:none;background:rgba(240,184,74,.14);color:var(--gold-lite);
+  border:1.5px solid var(--gold);border-radius:999px;
+  font:800 13px/1 var(--sans);padding:9px 14px;cursor:pointer;
+  letter-spacing:.05em;
+}
+.langbtn:active{background:rgba(239,228,204,.15)}
+
+/* ── section ────────────────────────── */
+section{margin:26px 0}
+.eyebrow{
+  font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--stone);display:flex;align-items:center;gap:9px;margin:0 0 9px;
+}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+h2{font-size:20px;margin:0 0 12px;font-weight:800;letter-spacing:-.01em}
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  padding:15px;
+}
+.card + .card{margin-top:10px}
+p{margin:0 0 10px}
+p:last-child{margin-bottom:0}
+small,.note{font-size:13px;font-weight:500;color:var(--stone);line-height:1.55}
+
+/* ── tank ───────────────────────────── */
+.tankgrid{display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:start}
+.vessel{position:relative}
+svg.tank{display:block;width:100%;height:auto}
+.mixlist{list-style:none;margin:0;padding:0}
+.mixlist li{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:9px 0;border-bottom:1px dashed var(--line);
+}
+.mixlist li:last-child{border-bottom:0}
+.mixname{font-size:14px;font-weight:700}
+.mixname i{display:block;font-style:normal;font-size:11px;color:var(--stone);font-weight:500}
+.qty{font-family:var(--mono);font-size:19px;font-weight:700;white-space:nowrap;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.qty u{text-decoration:none;font-size:12.5px;font-weight:700;color:rgba(44,30,14,.6);margin-left:3px}
+
+/* ── controls ───────────────────────── */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}
+.chip{
+  border:1.5px solid rgba(44,30,14,.3);
+  background:var(--paper);
+  color:rgba(44,30,14,.68);
+  border-radius:999px;padding:9px 14px;cursor:pointer;
+  font:700 14px/1 var(--sans);font-variant-numeric:tabular-nums;
+  transition:background .15s,color .15s,box-shadow .15s,transform .15s;
+}
+.chip:hover{color:var(--ink);border-color:rgba(44,30,14,.55)}
+.chip[aria-pressed="true"]{
+  background:linear-gradient(180deg,#4A3418 0%,#2C1E0E 100%);
+  color:var(--wheat);
+  border-color:#2C1E0E;
+  font-weight:800;
+  box-shadow:0 2px 0 rgba(44,30,14,.35),inset 0 1px 0 rgba(239,228,204,.18);
+  transform:translateY(-1px);
+}
+.chip[aria-pressed="true"]::before{content:"✓";font-weight:900;margin-right:6px;color:var(--gold-lite)}
+.chip[aria-pressed="true"]:hover{color:var(--wheat);border-color:#2C1E0E}
+input[type=number],input[type=date],select{
+  font:600 16px/1 var(--mono);padding:11px 12px;border:1.5px solid var(--line);
+  border-radius:10px;background:var(--paper);color:var(--ink);width:100%;
+}
+label.fld{display:block;margin:0 0 12px}
+.daterow{display:flex;gap:8px;align-items:stretch}
+.daterow input{flex:1;min-width:0}
+#today{flex:none;border:1.5px solid var(--gold);border-radius:10px;padding:0 14px;
+  background:linear-gradient(180deg,var(--gold-lite),var(--gold));color:#2A1B08;
+  font:800 14px/1 var(--sans);cursor:pointer;white-space:nowrap;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+#today[hidden]{display:none}
+label.fld > span{display:block;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--stone);margin:0 0 6px;font-family:var(--sans)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── steps ──────────────────────────── */
+.step{display:flex;gap:12px;align-items:flex-start;padding:14px 15px;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+.step + .step{margin-top:8px}
+.step.done{background:#F5EFDF;border-color:rgba(200,128,26,.5)}
+.tick{
+  flex:none;width:34px;height:34px;border-radius:9px;
+  border:2px solid #D9B478;background:#F8EDD6;color:#7A5217;
+  cursor:pointer;font:800 15px/1 var(--mono);
+  display:grid;place-items:center;
+}
+.step.done .tick{
+  background:linear-gradient(180deg,#F0B84A,#C8801A);
+  border-color:var(--gold);color:#2A1B08;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45);
+}
+.stepbody{flex:1;min-width:0}
+.steptitle{font-weight:700;font-size:15px;margin:0 0 3px}
+.stepbody p{font-size:14px;font-weight:500;margin:0 0 6px}
+.tip{
+  font-size:12.5px;font-weight:600;color:var(--teal);border-left:3px solid var(--teal);
+  padding:2px 0 2px 9px;margin-top:7px;line-height:1.45;
+}
+.warn{
+  background:#FBEDE7;border:1px solid rgba(168,62,34,.35);color:#6E2413;
+  border-radius:var(--r);padding:13px 15px;font-size:14px;font-weight:600;
+}
+.warn b{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--mono);color:var(--rust);margin-bottom:5px}
+.warn[hidden]{display:none}
+
+/* ── ferment ────────────────────────── */
+.dayband{display:flex;align-items:center;gap:14px;margin:2px 0 14px}
+.daynum{font-family:var(--mono);font-size:52px;font-weight:800;line-height:.85;
+  letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.daymeta{font-size:13px;font-weight:500;color:var(--stone)}
+.daymeta b{display:block;color:var(--ink);font-size:15px}
+.bar{height:9px;background:var(--wheat-2);border-radius:99px;overflow:hidden;margin:0 0 6px}
+.bar > i{display:block;height:100%;background:var(--gold);border-radius:99px;transition:width .4s}
+.bar.ready > i{background:var(--teal)}
+.stirgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.stir{
+  aspect-ratio:1;border:1.5px solid rgba(44,30,14,.3);border-radius:7px;background:var(--paper);
+  font:700 11px/1 var(--mono);color:rgba(44,30,14,.6);cursor:pointer;display:grid;place-items:center;padding:0;
+}
+.stir.on{background:linear-gradient(180deg,#4A3418,#2C1E0E);border-color:#2C1E0E;color:var(--wheat);
+  box-shadow:inset 0 1px 0 rgba(239,228,204,.18)}
+.stir.future{background:var(--paper);border-color:var(--line);color:var(--stone);opacity:.45;cursor:not-allowed}
+.phchart{width:100%;height:auto;display:block;margin-top:4px}
+
+/* ── results ────────────────────────── */
+.result{
+  background:var(--molasses);color:var(--wheat);border-radius:var(--r);padding:15px;
+}
+.ratio{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:0 0 12px;margin:0 0 6px;border-bottom:1.5px solid rgba(240,184,74,.4)}
+.ratio .rlabel{font-family:var(--sans);font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(239,228,204,.65);line-height:1.4}
+.ratio .rval{font-family:var(--mono);font-size:28px;font-weight:800;color:var(--gold-lite);
+  letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.result .rrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:8px 0;border-bottom:1px dashed rgba(239,228,204,.22)}
+.result .rrow:last-of-type{border-bottom:0}
+.result .qty{color:var(--gold-lite)}
+.result .qty u{color:rgba(239,228,204,.8)}
+.result .mixname{color:var(--wheat)}
+.result .mixname i{color:rgba(239,228,204,.6)}
+.rnote{font-size:12.5px;font-weight:500;color:rgba(239,228,204,.75);margin-top:10px;line-height:1.55}
+
+ul.plain{margin:0;padding-left:18px;font-size:14px;font-weight:500}
+ul.plain li{margin-bottom:6px}
+a{color:var(--teal);word-break:break-all}
+footer{margin:32px 0 0;font-size:12.5px;color:var(--stone);line-height:1.6}
+footer .v{font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-top:10px;display:block}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bub{animation:rise 3.4s linear infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.85}100%{transform:translateY(-46px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bub{animation:none;opacity:.5}*{transition:none!important}}
+@media (max-width:380px){.tankgrid{grid-template-columns:96px 1fr;gap:12px}.daynum{font-size:44px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hrow">
+    <h1>益菌坊<span class="en">EM Brew Lab</span></h1>
+    <button class="langbtn" id="lang" type="button">EN</button>
+  </div>
+  <div class="wrap"><p class="sub" data-zh="有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理" data-en="Brew effective microbes · track fermentation · calculate dilution — for durian trunk moss and soil treatment">有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理</p></div>
+</header>
+
+<main class="wrap">
+
+<!-- ── TANK ── -->
+<section>
+  <p class="eyebrow" data-zh="第一步　配方" data-en="Step one · The mix">第一步　配方</p>
+  <h2 data-zh="你的水桶多大？" data-en="How big is your tank?">你的水桶多大？</h2>
+  <div class="chips" id="sizes"></div>
+  <label class="fld" id="customwrap" hidden>
+    <span data-zh="自定义容量（公升）" data-en="Custom volume (litres)">自定义容量（公升）</span>
+    <input type="number" id="custom" min="20" max="5000" step="10" value="200">
+  </label>
+
+  <div class="card">
+    <div class="tankgrid">
+      <div class="vessel">
+        <svg class="tank" viewBox="0 0 100 150" aria-hidden="true">
+          <rect x="8" y="14" width="84" height="130" rx="9" fill="#E0D2B2"/>
+          <clipPath id="cl"><rect x="8" y="14" width="84" height="130" rx="9"/></clipPath>
+          <g clip-path="url(#cl)">
+            <rect id="fill" x="8" y="144" width="84" height="0" fill="#7A5217"/>
+            <rect id="fillTop" x="8" y="144" width="84" height="3" fill="#C8801A"/>
+            <g id="bubbles" opacity="0"></g>
+          </g>
+          <rect x="8" y="14" width="84" height="130" rx="9" fill="none" stroke="#2C1E0E" stroke-width="2.5"/>
+          <rect x="26" y="7" width="48" height="8" rx="3" fill="#2C1E0E"/>
+          <line x1="9" y1="40" x2="91" y2="40" stroke="#2C1E0E" stroke-width="2" stroke-dasharray="6 3.5" stroke-opacity=".7"/>
+          <rect x="55" y="21" width="34" height="16" rx="4" fill="#2C1E0E"/>
+          <text x="72" y="32.5" font-size="10" font-weight="700" fill="#FBF6EA" text-anchor="middle" font-family="monospace">80%</text>
+        </svg>
+      </div>
+      <ul class="mixlist" id="mix"></ul>
+    </div>
+    <p class="note" id="packnote" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<!-- ── WATER SOURCE ── -->
+<section>
+  <p class="eyebrow" data-zh="水源" data-en="Water source">水源</p>
+  <h2 data-zh="你用什么水？" data-en="Which water are you using?">你用什么水？</h2>
+  <div class="chips" id="water"></div>
+  <div class="warn" id="chlorwarn" hidden>
+    <b data-zh="先除氯" data-en="De-chlorinate first">先除氯</b>
+    <span data-zh="自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。" data-en="Tap water contains chlorine and will kill the bacteria. Add a de-chlorinator (sold at aquarium shops) before the microbial booster — follow the dose on its own label. The flour must also be chlorine-free.">自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。</span>
+  </div>
+</section>
+
+<!-- ── STEPS ── -->
+<section>
+  <p class="eyebrow" data-zh="第二步　按顺序加料" data-en="Step two · Add in order">第二步　按顺序加料</p>
+  <h2 data-zh="加料顺序" data-en="Mixing sequence">加料顺序</h2>
+  <div id="steps"></div>
+</section>
+
+<!-- ── FERMENT ── -->
+<section>
+  <p class="eyebrow" data-zh="第三步　发酵" data-en="Step three · Fermentation">第三步　发酵</p>
+  <h2 data-zh="发酵追踪" data-en="Fermentation tracker">发酵追踪</h2>
+  <div class="card">
+    <label class="fld">
+      <span data-zh="开始发酵日期" data-en="Date you started">开始发酵日期</span>
+      <div class="daterow">
+        <input type="date" id="start">
+        <button type="button" id="today" data-zh="今天开始" data-en="Start today">今天开始</button>
+      </div>
+    </label>
+    <div class="dayband">
+      <div class="daynum" id="daynum">—</div>
+      <div class="daymeta"><b id="daystate">—</b><span id="dayhint"></span></div>
+    </div>
+    <div class="bar" id="bar"><i style="width:0%"></i></div>
+    <p class="note" data-zh="盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。" data-en="Lid open, under fine mesh netting to keep flies from laying eggs — this is an aerobic ferment. Stir at least 1 minute daily, then tap a square to log it.">盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。</p>
+    <div class="stirgrid" id="stirgrid"></div>
+  </div>
+
+  <div class="card">
+    <p class="eyebrow" style="margin-bottom:6px" data-zh="pH 实测记录" data-en="Measured pH">pH 实测记录</p>
+    <svg class="phchart" viewBox="0 0 300 130" role="img" aria-label="pH readings">
+      <g font-family="monospace" font-size="9" fill="#7C7466">
+        <line x1="34" y1="10" x2="34" y2="104" stroke="#2C1E0E" stroke-opacity=".2"/>
+        <line x1="34" y1="104" x2="292" y2="104" stroke="#2C1E0E" stroke-opacity=".2"/>
+        <text x="28" y="16" text-anchor="end">5.0</text>
+        <text x="28" y="62" text-anchor="end">4.2</text>
+        <text x="28" y="107" text-anchor="end">3.4</text>
+        <text x="34" y="120">D0</text><text x="152" y="120" text-anchor="middle">D11</text><text x="256" y="120" text-anchor="middle">D20</text>
+      </g>
+      <line x1="152" y1="87" x2="256" y2="35" stroke="#C8801A" stroke-width="2" stroke-dasharray="5 4"/>
+      <circle cx="152" cy="87" r="5" fill="#1F6E68"/>
+      <circle cx="256" cy="35" r="5" fill="#1F6E68"/>
+      <text x="152" y="79" font-family="monospace" font-size="10" font-weight="700" fill="#1F6E68" text-anchor="middle">3.7</text>
+      <text x="256" y="27" font-family="monospace" font-size="10" font-weight="700" fill="#1F6E68" text-anchor="middle">4.8</text>
+      <text x="60" y="60" font-family="monospace" font-size="9" fill="#7C7466" data-zh="无实测" data-en="no reading">无实测</text>
+    </svg>
+    <p class="note" data-zh="实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。" data-en="Solid dots are actual readings: pH 3.7 on day 11, pH 4.8 on day 20. The dashed line is only an inferred trend between those two points, not measured data. Nothing was measured before day 11. The rise depends on stirring every day.">实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。</p>
+  </div>
+</section>
+
+<!-- ── DILUTE ── -->
+<section>
+  <p class="eyebrow" data-zh="第四步　使用" data-en="Step four · Application">第四步　使用</p>
+  <h2 data-zh="稀释计算" data-en="Dilution calculator">稀释计算</h2>
+  <div class="chips" id="uses"></div>
+  <label class="fld">
+    <span data-zh="你要装多少清水？（公升）" data-en="How much water are you filling? (litres)">你要装多少清水？（公升）</span>
+    <input type="number" id="watervol" min="1" max="20000" step="1" value="20">
+  </label>
+  <div class="result">
+    <div class="ratio">
+      <span class="rlabel" data-zh="比例　发酵液 : 清水" data-en="Ratio　brew : water">比例　发酵液 : 清水</span>
+      <span class="rval" id="ratioOut">—</span>
+    </div>
+    <div class="rrow">
+      <span class="mixname" data-zh="发酵液" data-en="Fermented brew">发酵液</span>
+      <span class="qty" id="brewOut">—</span>
+    </div>
+    <div class="rrow">
+      <span class="mixname" data-zh="清水" data-en="Clean water">清水</span>
+      <span class="qty" id="waterOut">—</span>
+    </div>
+    <div class="rrow">
+      <span class="mixname" data-zh="混合总量" data-en="Total mixed">混合总量</span>
+      <span class="qty" id="totalOut">—</span>
+    </div>
+    <p class="rnote" id="useNote"></p>
+  </div>
+</section>
+
+<!-- ── NOTES ── -->
+<section>
+  <p class="eyebrow" data-zh="要注意" data-en="Worth knowing">要注意</p>
+  <h2 data-zh="菌种" data-en="The strains">菌种</h2>
+  <div class="card">
+    <p style="font-size:14px" data-zh="先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。" data-en="SNT Super Probiotein Plus contains Bacillus velezensis and Bacillus amyloliquefaciens. Use clean utensils only — best poured straight from the original bottle.">先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。</p>
+  </div>
+</section>
+
+<section>
+  <p class="eyebrow" data-zh="鸣谢" data-en="Acknowledgements">鸣谢</p>
+  <div class="card">
+    <ul class="plain">
+      <li data-zh="特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。" data-en="Thanks to my uncle Hoo Yat Kuan of TwinArrow/SNT, who arranged for his experienced colleague Andy Hoo to share this durian trunk moss solution.">特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。</li>
+      <li data-zh="劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。" data-en="Mr. Foh Tan of Focheng Ecopark, Raub, generously shared a 50% hydrogen peroxide approach; several other farmers shared a copper hypochlorite approach.">劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。</li>
+      <li data-zh="善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：" data-en="For five ways to use beneficial microbes well, see Mr. Hans Leong of Baba Gardening / Mr. Ganick:">善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：<br><a href="https://youtu.be/xVvzue0XMz4" target="_blank" rel="noopener">youtu.be/xVvzue0XMz4</a></li>
+      <li data-zh="后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。" data-en="Postscript: many companies now carry beneficial-microbe products — ask your usual agrochemical or fertiliser shop. LV LONG carries a Bacillus velezensis product; Bayer carries Bacillus amyloliquefaciens (Serenade SC).">后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span class="v" id="ver"></span>
+</footer>
+</main>
+
+<script>
+"use strict";
+var CACHE_VERSION = "embrew-v1.3.0-20260804";
+var NS = "embrew.";
+
+/* ── storage: real localStorage where allowed, memory fallback otherwise ── */
+var mem = {};
+var store = {
+  get: function(k){
+    try { var v = localStorage.getItem(NS+k); return v === null ? (k in mem ? mem[k] : null) : v; }
+    catch(e){ return (k in mem) ? mem[k] : null; }
+  },
+  set: function(k,v){
+    mem[k] = String(v);
+    try { localStorage.setItem(NS+k, String(v)); } catch(e){}
+  }
+};
+
+var LANG = store.get("lang") || "zh";
+var T = function(zh,en){ return LANG === "zh" ? zh : en; };
+
+/* ── recipe: per 200 L tank (from the source article) ── */
+var BASE = 200;
+var RECIPE = [
+  { key:"mol",  zh:"SNT 特级优质糖蜜", en:"SNT Super Premium Molasses", subZh:"农业级", subEn:"agriculture grade", per:15, unit:"kg" },
+  { key:"flr",  zh:"面粉", en:"Flour", subZh:"不可含氯", subEn:"must be chlorine-free", per:10, unit:"kg" },
+  { key:"azo",  zh:"火山矿粉", en:"SNT Azomite", subZh:"矿物微量元素粉", subEn:"volcanic rock dust", per:1, unit:"kg" },
+  { key:"pro",  zh:"SNT 超级益生菌", en:"SNT Super Probiotein Plus", subZh:"植物与土壤增强剂（微生物肥料）", subEn:"plant & soil booster (microbial)", per:1, unit:"L" }
+];
+
+var SIZES = [100,200,400,1000];
+var USES = [
+  { key:"soil", zh:"土壤处理", en:"Soil treatment", ratio:20, disp:"1 : 20",
+    noteZh:"每 1 公升发酵液配 20 公升清水。", noteEn:"1 L of brew to every 20 L of water." },
+  { key:"area", zh:"大面积叶面／淋施", en:"Large area · foliar / drench", ratio:null, disp:"30–40 : 1000",
+    noteZh:"大面积作业用：叶面喷施或土壤淋施，每 1000 公升清水配 30–40 公升发酵液。",
+    noteEn:"For working large areas — foliar spraying or soil drenching. 30–40 L of brew per 1000 L of water." },
+  { key:"moss", zh:"杀青苔", en:"Moss control", ratio:1, disp:"1 : 1",
+    noteZh:"1:1 使用，喷树干青苔。", noteEn:"Mixed 1:1, sprayed on mossy trunks." }
+];
+
+var STEPS = [
+  { id:"A", fill:50,
+    zh:"糖蜜 + 水到半桶", en:"Molasses, then water to half full",
+    bodyZh:"先加糖蜜，加清水到桶约半满，搅拌到糖蜜完全溶解。",
+    bodyEn:"Add the molasses, fill with water to about half the tank, and stir until it is fully dissolved.",
+    tipZh:"1 桶糖蜜＝30 公斤。", tipEn:"One container of molasses = 30 kg." },
+  { id:"B", fill:55,
+    zh:"面粉", en:"Flour",
+    bodyZh:"分批加入面粉，每批之间搅拌均匀，直到全部加完。",
+    bodyEn:"Add the flour in batches, stirring well between each batch until it is all in.",
+    tipZh:"", tipEn:"" },
+  { id:"C", fill:57,
+    zh:"火山矿粉", en:"Azomite",
+    bodyZh:"加入火山矿粉，搅拌均匀。",
+    bodyEn:"Add the Azomite and mix well.",
+    tipZh:"", tipEn:"" },
+  { id:"D", fill:59,
+    zh:"益菌", en:"The microbes",
+    bodyZh:"最后加入超级益生菌。工具必须干净，不要用受污染的容器，最好直接从原装瓶倒入。",
+    bodyEn:"Add the Super Probiotein Plus last. Utensils must be clean — no contaminated containers. Pour straight from the original bottle if you can.",
+    tipZh:"用自来水的话，这一步之前要先除氯。", tipEn:"On tap water, de-chlorinate before this step." },
+  { id:"E", fill:80,
+    zh:"加水到 80%，开盖发酵", en:"Top up to 80%, lid open",
+    bodyZh:"继续加水到桶约 80% 满，盖子打开，开始发酵。",
+    bodyEn:"Keep adding water until the tank is about 80% full, leave the lid open, and start the ferment.",
+    tipZh:"盖子要开，但一定要罩上细孔纱网，孔越细越好。不然苍蝇会飞进去产卵，几天后液面浮满蛆虫，到时候连搅拌都下不了手。",
+    tipEn:"Lid open, but cover the tank with fine mesh netting — the finer the weave the better. Otherwise flies get in and lay eggs, and a few days later the surface is crawling with maggots and you won't want to go near it to stir." }
+];
+
+var $ = function(s){ return document.querySelector(s); };
+var el = function(t,c){ var e = document.createElement(t); if(c) e.className = c; return e; };
+
+/* ── state ── */
+var st = {
+  size: parseFloat(store.get("size")) || 200,
+  custom: parseFloat(store.get("custom")) || 200,
+  water: store.get("water") || "rain",
+  use: store.get("use") || "soil",
+  vol: parseFloat(store.get("vol")) || 20,
+  start: store.get("start") || "",
+  done: JSON.parse(store.get("done") || "[]"),
+  stirs: JSON.parse(store.get("stirs") || "[]")
+};
+
+function fmt(n){
+  if (n >= 100) return String(Math.round(n));
+  if (n >= 10) return (Math.round(n*10)/10).toString();
+  if (n >= 1) return (Math.round(n*100)/100).toString();
+  return (Math.round(n*1000)/1000).toString();
+}
+
+/* ── render: recipe quantities ── */
+function renderMix(){
+  var tank = st.size === 0 ? st.custom : st.size;
+  var f = tank / BASE;
+  var ul = $("#mix");
+  ul.innerHTML = "";
+  RECIPE.forEach(function(r){
+    var li = el("li");
+    var nm = el("span","mixname");
+    nm.textContent = T(r.zh, r.en);
+    var i = el("i");
+    i.textContent = T(r.subZh, r.subEn);
+    nm.appendChild(i);
+    var q = el("span","qty");
+    q.textContent = fmt(r.per * f);
+    var u = el("u");
+    u.textContent = r.unit;
+    q.appendChild(u);
+    li.appendChild(nm); li.appendChild(q);
+    ul.appendChild(li);
+  });
+
+  var flour = 10 * f, mols = 15 * f;
+  var packs = Math.round(flour * 10) / 10;
+  var drums = Math.round(mols / 30 * 100) / 100;
+  $("#packnote").textContent = T(
+    "面粉约 " + fmt(packs) + " 包（1 公斤／包）；糖蜜约 " + fmt(drums) + " 桶（30 公斤／桶）。桶装 80% 即约 " + fmt(tank*0.8) + " 公升液体。",
+    "About " + fmt(packs) + " packs of flour (1 kg each) and " + fmt(drums) + " containers of molasses (30 kg each). Filled to 80%, the tank holds roughly " + fmt(tank*0.8) + " L."
+  );
+  renderSteps();
+}
+
+/* ── render: chips ── */
+function renderSizes(){
+  var box = $("#sizes");
+  box.innerHTML = "";
+  SIZES.concat([0]).forEach(function(s){
+    var b = el("button","chip");
+    b.type = "button";
+    b.textContent = s === 0 ? T("自定义","Custom") : s + " L";
+    b.setAttribute("aria-pressed", st.size === s ? "true" : "false");
+    b.onclick = function(){
+      st.size = s; store.set("size", s);
+      $("#customwrap").hidden = (s !== 0);
+      renderSizes(); renderMix();
+    };
+    box.appendChild(b);
+  });
+  $("#customwrap").hidden = (st.size !== 0);
+}
+
+function renderWater(){
+  var box = $("#water");
+  box.innerHTML = "";
+  [["rain", "雨水／河水", "Rain / river"], ["tap", "自来水", "Tap water"]].forEach(function(o){
+    var b = el("button","chip");
+    b.type = "button";
+    b.textContent = T(o[1], o[2]);
+    b.setAttribute("aria-pressed", st.water === o[0] ? "true" : "false");
+    b.onclick = function(){ st.water = o[0]; store.set("water", o[0]); renderWater(); };
+    box.appendChild(b);
+  });
+  $("#chlorwarn").hidden = (st.water !== "tap");
+}
+
+function renderUses(){
+  var box = $("#uses");
+  box.innerHTML = "";
+  USES.forEach(function(u){
+    var b = el("button","chip");
+    b.type = "button";
+    b.textContent = T(u.zh, u.en);
+    b.setAttribute("aria-pressed", st.use === u.key ? "true" : "false");
+    b.onclick = function(){ st.use = u.key; store.set("use", u.key); renderUses(); renderDilute(); };
+    box.appendChild(b);
+  });
+}
+
+/* ── render: steps + tank fill ── */
+function renderSteps(){
+  var tank = st.size === 0 ? st.custom : st.size;
+  var f = tank / BASE;
+  var box = $("#steps");
+  box.innerHTML = "";
+  STEPS.forEach(function(s, idx){
+    var done = st.done.indexOf(s.id) > -1;
+    var d = el("div", "step" + (done ? " done" : ""));
+    var tk = el("button","tick");
+    tk.type = "button";
+    tk.textContent = done ? "✓" : s.id;
+    tk.setAttribute("aria-pressed", done ? "true" : "false");
+    tk.onclick = function(){
+      var i = st.done.indexOf(s.id);
+      if (i > -1) st.done.splice(i,1); else st.done.push(s.id);
+      store.set("done", JSON.stringify(st.done));
+      renderSteps();
+    };
+    var body = el("div","stepbody");
+    var h = el("p","steptitle");
+    var amount = "";
+    if (s.id === "A") amount = fmt(15*f) + " kg · ";
+    if (s.id === "B") amount = fmt(10*f) + " kg · ";
+    if (s.id === "C") amount = fmt(1*f) + " kg · ";
+    if (s.id === "D") amount = fmt(1*f) + " L · ";
+    h.textContent = amount + T(s.zh, s.en);
+    var p = el("p");
+    p.textContent = T(s.bodyZh, s.bodyEn);
+    body.appendChild(h); body.appendChild(p);
+
+    var tipZh = s.tipZh, tipEn = s.tipEn;
+    if (s.id === "B"){
+      if (tank >= 400){
+        tipZh = "桶够大（≥400 公升），10 公斤面粉可以一次倒完再搅拌。";
+        tipEn = "The tank is large enough (≥400 L) — pour all the flour in at once, then stir.";
+      } else {
+        tipZh = "每次加 2 包（2 公斤），搅拌后再加下一批，比较好搅也不结块。";
+        tipEn = "Add 2 packs (2 kg) at a time and stir before the next batch — easier to mix and it stops clumping.";
+      }
+    }
+    if (s.id === "D" && st.water !== "tap"){ tipZh = ""; tipEn = ""; }
+    if (T(tipZh, tipEn)){
+      var t = el("p","tip");
+      t.textContent = T(tipZh, tipEn);
+      body.appendChild(t);
+    }
+    d.appendChild(tk); d.appendChild(body);
+    box.appendChild(d);
+  });
+  paintTank();
+}
+
+function paintTank(){
+  var pct = 0;
+  STEPS.forEach(function(s){ if (st.done.indexOf(s.id) > -1 && s.fill > pct) pct = s.fill; });
+  var top = 14, h = 130;
+  var fh = h * (pct/100);
+  var y = top + h - fh;
+  $("#fill").setAttribute("y", y);
+  $("#fill").setAttribute("height", fh);
+  $("#fillTop").setAttribute("y", fh > 0 ? y : 144);
+  $("#fillTop").setAttribute("height", fh > 0 ? 3 : 0);
+  var bub = $("#bubbles");
+  var ferm = (pct >= 80 && st.start);
+  bub.setAttribute("opacity", ferm ? "1" : "0");
+  if (ferm && !bub.childNodes.length){
+    [[26,120,0],[46,132,1.1],[64,124,2.2],[38,128,1.7],[72,134,.6]].forEach(function(b){
+      var c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx", b[0]); c.setAttribute("cy", b[1]); c.setAttribute("r", 2.2);
+      c.setAttribute("fill", "#F0B84A"); c.setAttribute("class","bub");
+      c.style.animationDelay = b[2] + "s";
+      bub.appendChild(c);
+    });
+  }
+}
+
+/* ── render: fermentation ── */
+function dayNumber(){
+  if (!st.start) return null;
+  var s = new Date(st.start + "T00:00:00");
+  if (isNaN(s.getTime())) return null;
+  var n = new Date();
+  var today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  return Math.floor((today - s) / 86400000);
+}
+
+function renderFerment(){
+  $("#start").value = st.start;
+  var d = dayNumber();
+  var numEl = $("#daynum"), stEl = $("#daystate"), hintEl = $("#dayhint");
+  var bar = $("#bar");
+
+  if (d === null){
+    numEl.textContent = "—";
+    stEl.textContent = T("还没开始", "Not started");
+    hintEl.textContent = T("填入开始日期，就会算天数。", "Set the start date to begin counting.");
+    bar.querySelector("i").style.width = "0%";
+    bar.classList.remove("ready");
+  } else if (d < 0){
+    numEl.textContent = "—";
+    stEl.textContent = T("日期在未来", "Date is in the future");
+    hintEl.textContent = T("请检查开始日期。", "Check the start date.");
+    bar.querySelector("i").style.width = "0%";
+    bar.classList.remove("ready");
+  } else {
+    numEl.textContent = String(d);
+    if (d < 10){
+      if (d === 0){
+        stEl.textContent = T("第 0 天 · 配制当天", "Day 0 · mixing day");
+        hintEl.textContent = T("10 天后可用。", "Ready in 10 days.");
+      } else {
+        stEl.textContent = T("第 " + d + " 天 · 发酵中", "Day " + d + " · fermenting");
+        hintEl.textContent = T("还有 " + (10-d) + " 天可用。", (10-d) + " days until it is ready.");
+      }
+      bar.classList.remove("ready");
+    } else {
+      stEl.textContent = T("可以用了", "Ready to use");
+      hintEl.textContent = T("第 10 天起即可使用；继续每天搅拌，pH 会慢慢回升。", "Usable from day 10. Keep stirring daily and the pH keeps climbing.");
+      bar.classList.add("ready");
+    }
+    bar.querySelector("i").style.width = Math.min(100, d/10*100) + "%";
+  }
+
+  $("#today").hidden = !!st.start;
+
+  var grid = $("#stirgrid");
+  grid.innerHTML = "";
+  for (var i = 0; i <= 20; i++){
+    (function(day){
+      var on = st.stirs.indexOf(day) > -1;
+      var future = (d === null) || (day > d);
+      var b = el("button", "stir" + (on ? " on" : "") + (future ? " future" : ""));
+      b.type = "button";
+      b.textContent = day;
+      b.setAttribute("aria-label", T("第 " + day + " 天搅拌", "Day " + day + " stir"));
+      b.disabled = future;
+      b.onclick = function(){
+        var k = st.stirs.indexOf(day);
+        if (k > -1) st.stirs.splice(k,1); else st.stirs.push(day);
+        store.set("stirs", JSON.stringify(st.stirs));
+        renderFerment();
+      };
+      grid.appendChild(b);
+    })(i);
+  }
+  paintTank();
+}
+
+/* ── render: dilution ── */
+function renderDilute(){
+  var u = USES.filter(function(x){ return x.key === st.use; })[0];
+  var w = st.vol > 0 ? st.vol : 0;
+  var bo = $("#brewOut"), wo = $("#waterOut"), to = $("#totalOut");
+  var unit = T(" 公升", " L");
+
+  function q(node, val){
+    node.textContent = val;
+    var uu = el("u"); uu.textContent = unit; node.appendChild(uu);
+  }
+  wo.textContent = ""; q(wo, fmt(w));
+
+  if (u.key === "area"){
+    var lo = w * 30/1000, hi = w * 40/1000;
+    bo.textContent = ""; q(bo, fmt(lo) + "–" + fmt(hi));
+    to.textContent = ""; q(to, fmt(w+lo) + "–" + fmt(w+hi));
+  } else {
+    var b = w / u.ratio;
+    bo.textContent = ""; q(bo, fmt(b));
+    to.textContent = ""; q(to, fmt(w + b));
+  }
+  $("#ratioOut").textContent = u.disp;
+  $("#useNote").textContent = T(u.noteZh, u.noteEn);
+}
+
+/* ── language ── */
+function applyLang(){
+  document.documentElement.lang = LANG === "zh" ? "zh-Hans" : "en";
+  $("#lang").textContent = LANG === "zh" ? "EN" : "中文";
+  var nodes = document.querySelectorAll("[data-zh]");
+  for (var i = 0; i < nodes.length; i++){
+    var n = nodes[i];
+    var val = LANG === "zh" ? n.getAttribute("data-zh") : n.getAttribute("data-en");
+    var br = n.querySelector("a");
+    if (br){
+      n.childNodes[0].nodeValue = val;
+    } else {
+      n.textContent = val;
+    }
+  }
+  renderSizes(); renderWater(); renderUses();
+  renderMix(); renderFerment(); renderDilute();
+}
+
+/* ── wire ── */
+$("#lang").onclick = function(){
+  LANG = (LANG === "zh") ? "en" : "zh";
+  store.set("lang", LANG);
+  applyLang();
+};
+$("#custom").value = st.custom;
+$("#custom").oninput = function(){
+  var v = parseFloat(this.value);
+  if (v > 0){ st.custom = v; store.set("custom", v); renderMix(); }
+};
+$("#watervol").value = st.vol;
+$("#watervol").oninput = function(){
+  var v = parseFloat(this.value);
+  st.vol = (v > 0) ? v : 0;
+  store.set("vol", st.vol);
+  renderDilute();
+};
+$("#today").onclick = function(){
+  var n = new Date();
+  var m = n.getMonth() + 1, dd = n.getDate();
+  st.start = n.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (dd < 10 ? "0" : "") + dd;
+  store.set("start", st.start);
+  renderFerment();
+};
+$("#start").onchange = function(){
+  st.start = this.value;
+  store.set("start", this.value);
+  renderFerment();
+};
+$("#ver").textContent = CACHE_VERSION;
+
+applyLang();
+
+/* ── offline: real service worker ── */
+if ("serviceWorker" in navigator && location.protocol !== "file:"){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./sw.js").then(function(reg){
+      reg.addEventListener("updatefound", function(){
+        var w = reg.installing;
+        if (!w) return;
+        w.addEventListener("statechange", function(){
+          if (w.state === "installed" && navigator.serviceWorker.controller){
+            console.log("EM Brew Lab: update installed, active on next launch.");
+          }
+        });
+      });
+    }).catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
