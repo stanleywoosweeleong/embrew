@@ -216,6 +216,19 @@ ul.plain li{margin-bottom:6px}
 a{color:var(--teal);word-break:break-all}
 footer{margin:32px 0 0;font-size:12.5px;color:var(--stone);line-height:1.6}
 footer .v{font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-top:10px;display:block}
+.share{
+  display:flex;align-items:center;gap:16px;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px 16px;margin:0 0 14px;
+}
+.share svg{flex:none;width:104px;height:104px;display:block;border-radius:6px;background:#fff;padding:5px}
+.sharetxt{min-width:0}
+.sharetxt b{display:block;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.sharetxt span{display:block;font-size:12.5px;font-weight:500;color:var(--stone);line-height:1.5}
+.sharetxt a{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;
+  font-family:var(--mono);color:var(--ink);word-break:break-all;text-decoration:none;
+  border-bottom:2px solid var(--gold)}
+@media (max-width:380px){.share{gap:12px;padding:12px}.share svg{width:88px;height:88px}}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .bub{animation:rise 3.4s linear infinite}
 @keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.85}100%{transform:translateY(-46px);opacity:0}}
@@ -382,13 +395,23 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </section>
 
 <footer>
+  <div class="share">
+    <svg viewBox="0 0 37 37" role="img" aria-label="QR code">
+      <path stroke="#2C1E0E" d="M2 2.5h7m3 0h2m2 0h1m2 0h4m2 0h1m2 0h7m-33 1h1m5 0h1m1 0h2m2 0h1m5 0h1m2 0h3m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h7m1 0h1m1 0h3m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m1 0h1m2 0h1m2 0h1m4 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h1m1 0h1m1 0h1m1 0h1m1 0h2m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m3 0h1m1 0h2m1 0h1m2 0h3m3 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h1m3 0h4m2 0h2m-23 1h3m1 0h2m2 0h1m2 0h1m1 0h1m1 0h4m1 0h1m1 0h1m6 0h2m-32 1h2m1 0h2m2 0h3m3 0h1m4 0h3m1 0h2m2 0h2m1 0h2m1 0h1m-33 1h2m1 0h1m1 0h3m1 0h3m1 0h2m1 0h2m3 0h3m1 0h5m1 0h2m-32 1h1m1 0h3m4 0h4m2 0h1m3 0h1m2 0h3m1 0h1m1 0h1m2 0h1m-27 1h2m1 0h4m1 0h1m1 0h1m1 0h1m1 0h1m1 0h4m2 0h2m1 0h2m-32 1h2m1 0h2m1 0h4m2 0h3m3 0h1m1 0h1m2 0h1m2 0h1m2 0h2m-31 1h2m1 0h6m2 0h3m1 0h2m1 0h2m1 0h1m3 0h3m1 0h1m-30 1h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h4m1 0h6m-31 1h2m1 0h1m2 0h5m1 0h1m3 0h3m2 0h2m2 0h2m1 0h3m-31 1h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h1m1 0h2m1 0h2m-32 1h2m1 0h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h1m1 0h3m3 0h3m1 0h2m-31 1h2m1 0h2m3 0h4m1 0h2m1 0h1m1 0h2m1 0h2m2 0h1m1 0h1m2 0h2m-32 1h2m3 0h3m1 0h2m2 0h2m1 0h1m1 0h1m1 0h1m7 0h2m-31 1h1m1 0h1m1 0h2m1 0h5m1 0h1m3 0h5m1 0h4m2 0h2m1 0h1m-29 1h1m1 0h2m2 0h2m1 0h2m2 0h2m1 0h4m2 0h3m1 0h3m-32 1h1m1 0h1m3 0h1m1 0h1m1 0h4m2 0h1m5 0h1m2 0h3m-29 1h1m2 0h1m1 0h2m2 0h1m1 0h1m1 0h1m3 0h2m1 0h1m1 0h1m1 0h5m2 0h2m-25 1h2m2 0h2m1 0h1m3 0h1m1 0h1m1 0h2m3 0h2m-30 1h7m2 0h1m2 0h1m1 0h2m2 0h3m2 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h6m1 0h1m3 0h6m3 0h3m-31 1h1m1 0h3m1 0h1m5 0h1m1 0h2m3 0h1m1 0h8m1 0h2m-32 1h1m1 0h3m1 0h1m1 0h1m8 0h2m1 0h3m4 0h1m1 0h4m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h4m1 0h3m3 0h6m-28 1h1m5 0h1m1 0h4m1 0h2m2 0h1m1 0h2m1 0h7m3 0h1m-33 1h7m2 0h1m1 0h1m2 0h2m3 0h1m1 0h1m1 0h1m4 0h1m1 0h1"/>
+    </svg>
+    <div class="sharetxt">
+      <b data-zh="分享这个 App" data-en="Share this app">分享这个 App</b>
+      <span data-zh="扫码打开，可安装到手机主屏幕，离线也能用。" data-en="Scan to open. Installs to the home screen and works offline.">扫码打开，可安装到手机主屏幕，离线也能用。</span>
+      <a href="https://stanleywoosweeleong.github.io/embrew/" target="_blank" rel="noopener">stanleywoosweeleong.github.io/embrew/</a>
+    </div>
+  </div>
   <span class="v" id="ver"></span>
 </footer>
 </main>
 
 <script>
 "use strict";
-var CACHE_VERSION = "embrew-v1.3.1-20260804";
+var CACHE_VERSION = "embrew-v1.4.0-20260804";
 var NS = "embrew.";
 
 /* ── storage: real localStorage where allowed, memory fallback otherwise ── */

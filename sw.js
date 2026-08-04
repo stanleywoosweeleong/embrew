@@ -2,7 +2,7 @@
    Bump CACHE_VERSION on every deploy. Old caches are deleted on activate. */
 "use strict";
 
-var CACHE_VERSION = "embrew-v1.3.1-20260804";
+var CACHE_VERSION = "embrew-v1.4.0-20260804";
 
 var SHELL = [
   "./",
