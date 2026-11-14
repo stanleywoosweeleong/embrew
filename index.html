@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="益菌坊">
-<meta name="description" content="有效微生物制作、发酵追踪与稀释计算 — Effective microbes brewing, fermentation tracking and dilution calculator for durian growers.">
+<meta name="description" content="有效微生物制作、发酵追踪与稀释计算 — Effective microbes brewing, fermentation tracking and dilution calculator for durian growers. Bancuhan mikrob berkesan, penjejak penapaian dan kalkulator pencairan untuk pekebun durian.">
 <style>
 :root{
   --molasses:#2C1E0E;
@@ -64,13 +64,18 @@ h1{
 h1 .en{display:block;font-size:12px;font-weight:700;letter-spacing:.22em;
   text-transform:uppercase;color:var(--gold-lite);margin-top:7px}
 .sub{margin:10px 0 0;font-size:13px;font-weight:500;color:rgba(239,228,204,.78)}
+.langs{
+  flex:none;display:flex;background:rgba(240,184,74,.14);
+  border:1.5px solid var(--gold);border-radius:999px;padding:2px;gap:2px;
+}
 .langbtn{
-  flex:none;background:rgba(240,184,74,.14);color:var(--gold-lite);
-  border:1.5px solid var(--gold);border-radius:999px;
-  font:800 13px/1 var(--sans);padding:9px 14px;cursor:pointer;
+  background:transparent;color:var(--gold-lite);
+  border:0;border-radius:999px;
+  font:800 13px/1 var(--sans);padding:8px 11px;cursor:pointer;
   letter-spacing:.05em;
 }
 .langbtn:active{background:rgba(239,228,204,.15)}
+.langbtn[aria-pressed="true"]{background:var(--gold-lite);color:var(--molasses)}
 
 /* ── section ────────────────────────── */
 section{margin:26px 0}
@@ -263,20 +268,24 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <header>
   <div class="wrap hrow">
     <h1>益菌坊<span class="en">EM Brew Lab</span></h1>
-    <button class="langbtn" id="lang" type="button">EN</button>
+    <div class="langs" id="langs" role="group" aria-label="语言 · Language · Bahasa">
+      <button class="langbtn" type="button" data-lang="zh" lang="zh-Hans">中文</button>
+      <button class="langbtn" type="button" data-lang="en" lang="en">EN</button>
+      <button class="langbtn" type="button" data-lang="ms" lang="ms">BM</button>
+    </div>
   </div>
-  <div class="wrap"><p class="sub" data-zh="有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理" data-en="Brew effective microbes · track fermentation · calculate dilution — for durian trunk moss and soil treatment">有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理</p></div>
+  <div class="wrap"><p class="sub" data-zh="有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理" data-en="Brew effective microbes · track fermentation · calculate dilution — for durian trunk moss and soil treatment" data-ms="Bancuh mikrob berkesan · jejak penapaian · kira pencairan — untuk rawatan lumut batang durian dan tanah">有效微生物制作 · 发酵追踪 · 稀释计算　｜　处理榴莲树青苔与土壤处理</p></div>
 </header>
 
 <main class="wrap">
 
 <!-- ── TANK ── -->
 <section>
-  <p class="eyebrow" data-zh="第一步　配方" data-en="Step one · The mix">第一步　配方</p>
-  <h2 data-zh="你的水桶多大？" data-en="How big is your tank?">你的水桶多大？</h2>
+  <p class="eyebrow" data-zh="第一步　配方" data-en="Step one · The mix" data-ms="Langkah satu · Bancuhan">第一步　配方</p>
+  <h2 data-zh="你的水桶多大？" data-en="How big is your tank?" data-ms="Berapa besar tong anda?">你的水桶多大？</h2>
   <div class="chips" id="sizes"></div>
   <label class="fld" id="customwrap" hidden>
-    <span data-zh="自定义容量（公升）" data-en="Custom volume (litres)">自定义容量（公升）</span>
+    <span data-zh="自定义容量（公升）" data-en="Custom volume (litres)" data-ms="Isi padu sendiri (liter)">自定义容量（公升）</span>
     <input type="number" id="custom" min="20" max="5000" step="10" value="200">
   </label>
 
@@ -306,32 +315,32 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 <!-- ── WATER SOURCE ── -->
 <section>
-  <p class="eyebrow" data-zh="水源" data-en="Water source">水源</p>
-  <h2 data-zh="你用什么水？" data-en="Which water are you using?">你用什么水？</h2>
+  <p class="eyebrow" data-zh="水源" data-en="Water source" data-ms="Sumber air">水源</p>
+  <h2 data-zh="你用什么水？" data-en="Which water are you using?" data-ms="Air apa yang anda guna?">你用什么水？</h2>
   <div class="chips" id="water"></div>
   <div class="warn" id="chlorwarn" hidden>
-    <b data-zh="先除氯" data-en="De-chlorinate first">先除氯</b>
-    <span data-zh="自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。" data-en="Tap water contains chlorine and will kill the bacteria. Add a de-chlorinator (sold at aquarium shops) before the microbial booster — follow the dose on its own label. The flour must also be chlorine-free.">自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。</span>
+    <b data-zh="先除氯" data-en="De-chlorinate first" data-ms="Nyahklorin dahulu">先除氯</b>
+    <span data-zh="自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。" data-en="Tap water contains chlorine and will kill the bacteria. Add a de-chlorinator (sold at aquarium shops) before the microbial booster — follow the dose on its own label. The flour must also be chlorine-free." data-ms="Air paip mengandungi klorin yang akan membunuh bakteria. Masukkan antiklorin (dijual di kedai akuarium) sebelum memasukkan mikrob — ikut dos pada label botolnya. Tepung juga mesti bebas klorin.">自来水含氯，会杀死益菌。加入益菌之前，请先加抗氯剂（水族馆有售），剂量以抗氯剂瓶身说明为准。面粉也不可含氯。</span>
   </div>
 </section>
 
 <!-- ── STEPS ── -->
 <section>
-  <p class="eyebrow" data-zh="第二步　按顺序加料" data-en="Step two · Add in order">第二步　按顺序加料</p>
-  <h2 data-zh="加料顺序" data-en="Mixing sequence">加料顺序</h2>
+  <p class="eyebrow" data-zh="第二步　按顺序加料" data-en="Step two · Add in order" data-ms="Langkah dua · Masukkan mengikut urutan">第二步　按顺序加料</p>
+  <h2 data-zh="加料顺序" data-en="Mixing sequence" data-ms="Urutan bancuhan">加料顺序</h2>
   <div id="steps"></div>
 </section>
 
 <!-- ── FERMENT ── -->
 <section>
-  <p class="eyebrow" data-zh="第三步　发酵" data-en="Step three · Fermentation">第三步　发酵</p>
-  <h2 data-zh="发酵追踪" data-en="Fermentation tracker">发酵追踪</h2>
+  <p class="eyebrow" data-zh="第三步　发酵" data-en="Step three · Fermentation" data-ms="Langkah tiga · Penapaian">第三步　发酵</p>
+  <h2 data-zh="发酵追踪" data-en="Fermentation tracker" data-ms="Penjejak penapaian">发酵追踪</h2>
   <div class="card">
     <label class="fld">
-      <span data-zh="开始发酵日期" data-en="Date you started">开始发酵日期</span>
+      <span data-zh="开始发酵日期" data-en="Date you started" data-ms="Tarikh mula">开始发酵日期</span>
       <div class="daterow">
         <input type="date" id="start">
-        <button type="button" id="today" data-zh="今天开始" data-en="Start today">今天开始</button>
+        <button type="button" id="today" data-zh="今天开始" data-en="Start today" data-ms="Mula hari ini">今天开始</button>
       </div>
     </label>
     <div class="dayband">
@@ -339,12 +348,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       <div class="daymeta"><b id="daystate">—</b><span id="dayhint"></span></div>
     </div>
     <div class="bar" id="bar"><i style="width:0%"></i></div>
-    <p class="note" data-zh="盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。" data-en="Lid open, under fine mesh netting to keep flies from laying eggs — this is an aerobic ferment. Stir at least 1 minute daily, then tap a square to log it.">盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。</p>
+    <p class="note" data-zh="盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。" data-en="Lid open, under fine mesh netting to keep flies from laying eggs — this is an aerobic ferment. Stir at least 1 minute daily, then tap a square to log it." data-ms="Biarkan penutup terbuka, ditutup dengan jaring halus supaya lalat tidak bertelur — ini penapaian aerobik. Kacau sekurang-kurangnya 1 minit setiap hari, kemudian ketik petak untuk merekodkannya.">盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。</p>
     <div class="stirgrid" id="stirgrid"></div>
   </div>
 
   <div class="card">
-    <p class="eyebrow" style="margin-bottom:6px" data-zh="pH 实测记录" data-en="Measured pH">pH 实测记录</p>
+    <p class="eyebrow" style="margin-bottom:6px" data-zh="pH 实测记录" data-en="Measured pH" data-ms="pH yang diukur">pH 实测记录</p>
     <svg class="phchart" viewBox="0 0 300 130" role="img" aria-label="pH readings">
       <g font-family="monospace" font-size="9" fill="#7C7466">
         <line x1="34" y1="10" x2="34" y2="104" stroke="#2C1E0E" stroke-opacity=".2"/>
@@ -359,36 +368,36 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       <circle cx="256" cy="35" r="5" fill="#1F6E68"/>
       <text x="152" y="79" font-family="monospace" font-size="10" font-weight="700" fill="#1F6E68" text-anchor="middle">3.7</text>
       <text x="256" y="27" font-family="monospace" font-size="10" font-weight="700" fill="#1F6E68" text-anchor="middle">4.8</text>
-      <text x="60" y="60" font-family="monospace" font-size="9" fill="#7C7466" data-zh="无实测" data-en="no reading">无实测</text>
+      <text x="60" y="60" font-family="monospace" font-size="9" fill="#7C7466" data-zh="无实测" data-en="no reading" data-ms="tiada bacaan">无实测</text>
     </svg>
-    <p class="note" data-zh="实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。" data-en="Solid dots are actual readings: pH 3.7 on day 11, pH 4.8 on day 20. The dashed line is only an inferred trend between those two points, not measured data. Nothing was measured before day 11. The rise depends on stirring every day.">实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。</p>
+    <p class="note" data-zh="实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。" data-en="Solid dots are actual readings: pH 3.7 on day 11, pH 4.8 on day 20. The dashed line is only an inferred trend between those two points, not measured data. Nothing was measured before day 11. The rise depends on stirring every day." data-ms="Titik padu ialah bacaan sebenar: pH 3.7 pada hari ke-11, pH 4.8 pada hari ke-20. Garis putus-putus hanyalah anggaran arah aliran antara dua titik itu, bukan data yang diukur. Tiada ukuran dibuat sebelum hari ke-11. Kenaikan pH bergantung pada kacauan setiap hari.">实心点＝实际测得：第 11 天 pH 3.7，第 20 天 pH 4.8。虚线只是两点之间的推测走势，不是实测数据。第 11 天之前没有测过。pH 能否回升，取决于你有没有每天搅拌。</p>
   </div>
 </section>
 
 <!-- ── DILUTE ── -->
 <section>
-  <p class="eyebrow" data-zh="第四步　使用" data-en="Step four · Application">第四步　使用</p>
-  <h2 data-zh="稀释计算" data-en="Dilution calculator">稀释计算</h2>
+  <p class="eyebrow" data-zh="第四步　使用" data-en="Step four · Application" data-ms="Langkah empat · Penggunaan">第四步　使用</p>
+  <h2 data-zh="稀释计算" data-en="Dilution calculator" data-ms="Kalkulator pencairan">稀释计算</h2>
   <div class="chips" id="uses"></div>
   <label class="fld">
-    <span data-zh="你要装多少清水？（公升）" data-en="How much water are you filling? (litres)">你要装多少清水？（公升）</span>
+    <span data-zh="你要装多少清水？（公升）" data-en="How much water are you filling? (litres)" data-ms="Berapa banyak air yang anda isi? (liter)">你要装多少清水？（公升）</span>
     <input type="number" id="watervol" min="1" max="20000" step="1" value="20">
   </label>
   <div class="result">
     <div class="ratio">
-      <span class="rlabel" data-zh="比例　发酵液 : 清水" data-en="Ratio　brew : water">比例　发酵液 : 清水</span>
+      <span class="rlabel" data-zh="比例　发酵液 : 清水" data-en="Ratio　brew : water" data-ms="Nisbah　cecair tapaian : air">比例　发酵液 : 清水</span>
       <span class="rval" id="ratioOut">—</span>
     </div>
     <div class="rrow">
-      <span class="mixname" data-zh="发酵液" data-en="Fermented brew">发酵液</span>
+      <span class="mixname" data-zh="发酵液" data-en="Fermented brew" data-ms="Cecair tapaian">发酵液</span>
       <span class="qty" id="brewOut">—</span>
     </div>
     <div class="rrow">
-      <span class="mixname" data-zh="清水" data-en="Clean water">清水</span>
+      <span class="mixname" data-zh="清水" data-en="Clean water" data-ms="Air bersih">清水</span>
       <span class="qty" id="waterOut">—</span>
     </div>
     <div class="rrow">
-      <span class="mixname" data-zh="混合总量" data-en="Total mixed">混合总量</span>
+      <span class="mixname" data-zh="混合总量" data-en="Total mixed" data-ms="Jumlah campuran">混合总量</span>
       <span class="qty" id="totalOut">—</span>
     </div>
     <p class="rnote" id="useNote"></p>
@@ -397,10 +406,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 <!-- ── NOTES ── -->
 <section>
-  <p class="eyebrow" data-zh="要注意" data-en="Worth knowing">要注意</p>
-  <h2 data-zh="菌种" data-en="The strains">菌种</h2>
+  <p class="eyebrow" data-zh="要注意" data-en="Worth knowing" data-ms="Perlu tahu">要注意</p>
+  <h2 data-zh="菌种" data-en="The strains" data-ms="Strain mikrob">菌种</h2>
   <div class="card">
-    <p style="font-size:14px" data-zh="先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。" data-en="SNT Super Probiotein Plus contains Bacillus velezensis and Bacillus amyloliquefaciens. Use clean utensils only — best poured straight from the original bottle.">先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。</p>
+    <p style="font-size:14px" data-zh="先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。" data-en="SNT Super Probiotein Plus contains Bacillus velezensis and Bacillus amyloliquefaciens. Use clean utensils only — best poured straight from the original bottle." data-ms="SNT Super Probiotein Plus mengandungi Bacillus velezensis dan Bacillus amyloliquefaciens. Gunakan peralatan yang bersih sahaja — sebaik-baiknya tuang terus dari botol asal.">先利德超级益生菌（植物与土壤增强剂 · 微生物肥料）含贝莱斯芽孢杆菌（Bacillus velezensis）与解淀粉芽孢杆菌（Bacillus amyloliquefaciens）。工具要干净，最好直接从原装瓶倒入。</p>
   </div>
 </section>
 
@@ -408,45 +417,45 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <details class="fold">
     <summary>
       <span>
-        <small data-zh="万一失败" data-en="If it goes wrong">万一失败</small>
-        <span data-zh="发酵出问题" data-en="When a batch goes bad">发酵出问题</span>
+        <small data-zh="万一失败" data-en="If it goes wrong" data-ms="Jika gagal">万一失败</small>
+        <span data-zh="发酵出问题" data-en="When a batch goes bad" data-ms="Apabila penapaian bermasalah">发酵出问题</span>
       </span>
       <i aria-hidden="true">+</i>
     </summary>
     <div class="foldbody">
       <ul class="diag">
-        <li><em data-zh="正常" data-en="Normal">正常</em><span data-zh="酸香、糖蜜甜味、表面有泡 —— 继续用。" data-en="Sour, sweet molasses smell, foam on top — carry on.">酸香、糖蜜甜味、表面有泡 —— 继续用。</span></li>
-        <li><em data-zh="可救" data-en="Fixable">可救</em><span data-zh="酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。" data-en="Alcohol smell, no bubbling: under-aerated. Stir hard daily — it usually recovers.">酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。</span></li>
-        <li><em data-zh="可救" data-en="Fixable">可救</em><span data-zh="表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。" data-en="White skin on top, or maggots: skim it, fit the netting properly — still usable for soil.">表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。</span></li>
-        <li><em class="bad" data-zh="要丢弃" data-en="Discard">要丢弃</em><span data-zh="表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。" data-en="Green, black or blue fuzzy mould on the surface: discard the tank. <b>Do not spray it</b> — spraying puts the spores in the air you breathe.">表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。</span></li>
-        <li><em class="bad" data-zh="要丢弃" data-en="Discard">要丢弃</em><span data-zh="臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。" data-en="Rotten-egg or rancid smell, black and slimy: it is finished. Don't put your head over the opening.">臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。</span></li>
+        <li><em data-zh="正常" data-en="Normal" data-ms="Normal">正常</em><span data-zh="酸香、糖蜜甜味、表面有泡 —— 继续用。" data-en="Sour, sweet molasses smell, foam on top — carry on." data-ms="Bau masam, manis molases, berbuih di permukaan — teruskan.">酸香、糖蜜甜味、表面有泡 —— 继续用。</span></li>
+        <li><em data-zh="可救" data-en="Fixable" data-ms="Boleh pulih">可救</em><span data-zh="酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。" data-en="Alcohol smell, no bubbling: under-aerated. Stir hard daily — it usually recovers." data-ms="Bau alkohol, tiada buih: kurang pengudaraan. Kacau kuat-kuat setiap hari — biasanya ia pulih.">酒精味、不冒泡：曝气不足。用力搅拌，多数救得回来。</span></li>
+        <li><em data-zh="可救" data-en="Fixable" data-ms="Boleh pulih">可救</em><span data-zh="表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。" data-en="White skin on top, or maggots: skim it, fit the netting properly — still usable for soil." data-ms="Lapisan putih di permukaan, atau ada ulat: buang lapisan atas, pasang jaring dengan kemas — masih boleh digunakan untuk tanah.">表面一层白膜、或有蛆虫：捞掉表层，罩好纱网，淋地还可以用。</span></li>
+        <li><em class="bad" data-zh="要丢弃" data-en="Discard" data-ms="Buang">要丢弃</em><span data-zh="表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。" data-en="Green, black or blue fuzzy mould on the surface: discard the tank. <b>Do not spray it</b> — spraying puts the spores in the air you breathe." data-ms="Kulat berbulu hijau, hitam atau biru di permukaan: buang seluruh tong. <b>Jangan sembur</b> — semburan menerbangkan spora ke udara yang anda sedut.">表面长出绿／黑／蓝色毛霉：整桶丢弃。<b>不要拿去喷</b> —— 孢子会飘起来被吸入。</span></li>
+        <li><em class="bad" data-zh="要丢弃" data-en="Discard" data-ms="Buang">要丢弃</em><span data-zh="臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。" data-en="Rotten-egg or rancid smell, black and slimy: it is finished. Don't put your head over the opening." data-ms="Bau telur busuk atau tengik, hitam dan berlendir: sudah rosak. Jangan dekatkan kepala ke mulut tong.">臭鸡蛋味、酸腐味，液体发黑黏稠：已经变质。开盖时别把头凑近桶口。</span></li>
       </ul>
 
       <div class="warn">
-        <b data-zh="绝对不可以" data-en="Never">绝对不可以</b>
-        <span data-zh="不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。" data-en="Never pour it into a river, drain, pond, near a well, or into a septic tank. It strips the oxygen out of the water and kills fish — and in Malaysia it is an offence under the Environmental Quality Act 1974.">不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。</span>
+        <b data-zh="绝对不可以" data-en="Never" data-ms="Jangan sekali-kali">绝对不可以</b>
+        <span data-zh="不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。" data-en="Never pour it into a river, drain, pond, near a well, or into a septic tank. It strips the oxygen out of the water and kills fish — and in Malaysia it is an offence under the Environmental Quality Act 1974." data-ms="Jangan tuang ke dalam sungai, longkang, kolam, berhampiran perigi, atau ke dalam tangki septik. Ia menghabiskan oksigen dalam air dan membunuh ikan — dan di Malaysia ia satu kesalahan di bawah Akta Kualiti Alam Sekeliling 1974.">不可倒入河流、沟渠、水塘、井边或化粪池。发酵液会把水里的氧气耗光，鱼虾会死；在马来西亚这也是违法的（1974 年环境素质法令）。</span>
       </div>
 
-      <p class="steptitle" data-zh="正确的处理方法" data-en="How to dispose of it">正确的处理方法</p>
+      <p class="steptitle" data-zh="正确的处理方法" data-en="How to dispose of it" data-ms="Cara melupuskannya">正确的处理方法</p>
       <ul class="plain">
-        <li data-zh="稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。" data-en="Dilute at least 1:20 and spread thinly over a wide grassed or inter-row area, well away from water and wells. Never dump it all in one spot.">稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。</li>
-        <li data-zh="挑天气干的时候洒。大雨前洒等于直接流进河里。" data-en="Spread it in dry weather. Spreading before heavy rain just washes it into the river.">挑天气干的时候洒。大雨前洒等于直接流进河里。</li>
-        <li data-zh="或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。" data-en="Or pour it over plenty of dry material to compost — sawdust, dry leaves, chipped prunings, EFB. The dry matter soaks it up and holds the smell down.">或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。</li>
-        <li data-zh="酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。" data-en="If it is strongly acidic, stir in ground limestone or dolomite and leave it a day before spreading.">酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。</li>
-        <li data-zh="桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。" data-en="Rinse the tank and sun-dry it. Leftover sugar contaminates the next batch, and if you use bleach, rinse until there is no chlorine smell at all.">桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。</li>
+        <li data-zh="稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。" data-en="Dilute at least 1:20 and spread thinly over a wide grassed or inter-row area, well away from water and wells. Never dump it all in one spot." data-ms="Cairkan sekurang-kurangnya 1:20 dan tabur nipis di kawasan berumput yang luas atau di antara barisan pokok, jauh dari sumber air dan perigi. Jangan tuang semuanya di satu tempat.">稀释至少 1:20，薄薄地洒在大片草地或行间空地，远离水源与水井。不要一次倒在同一个点。</li>
+        <li data-zh="挑天气干的时候洒。大雨前洒等于直接流进河里。" data-en="Spread it in dry weather. Spreading before heavy rain just washes it into the river." data-ms="Tabur semasa cuaca kering. Menabur sebelum hujan lebat hanya menghanyutkannya ke sungai.">挑天气干的时候洒。大雨前洒等于直接流进河里。</li>
+        <li data-zh="或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。" data-en="Or pour it over plenty of dry material to compost — sawdust, dry leaves, chipped prunings, EFB. The dry matter soaks it up and holds the smell down." data-ms="Atau tuang ke atas banyak bahan kering untuk dikompos — habuk kayu, daun kering, ranting cincang, tandan kosong (EFB). Bahan kering menyerap cecair dan menahan bau.">或者倒在大量干料上堆肥 —— 木屑、干叶、碎枝、空果串。干料会吸住液体，也压得住味道。</li>
+        <li data-zh="酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。" data-en="If it is strongly acidic, stir in ground limestone or dolomite and leave it a day before spreading." data-ms="Jika terlalu berasid, kacau bersama serbuk batu kapur atau dolomit dan biarkan sehari sebelum ditabur.">酸性太强可先加石灰粉／白云石粉搅匀，隔天再洒。</li>
+        <li data-zh="桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。" data-en="Rinse the tank and sun-dry it. Leftover sugar contaminates the next batch, and if you use bleach, rinse until there is no chlorine smell at all." data-ms="Bilas tong dan jemur hingga kering. Sisa gula mencemari kelompok seterusnya, dan jika guna peluntur, bilas sehingga tiada langsung bau klorin.">桶要冲洗干净、晒干。残留的糖分会污染下一批；用漂白水洗的话，一定要冲到没有氯味。</li>
       </ul>
     </div>
   </details>
 </section>
 
 <section>
-  <p class="eyebrow" data-zh="鸣谢" data-en="Acknowledgements">鸣谢</p>
+  <p class="eyebrow" data-zh="鸣谢" data-en="Acknowledgements" data-ms="Penghargaan">鸣谢</p>
   <div class="card">
     <ul class="plain">
-      <li data-zh="特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。" data-en="Thanks to my uncle Mr. Hoo Yee Chow of TwinArrow/SNT, who arranged for his experienced colleague Andy Hoo to share this durian trunk moss solution.">特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。</li>
-      <li data-zh="劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。" data-en="Mr. Foh Tan of Focheng Ecopark, Raub, generously shared a 50% hydrogen peroxide approach; several other farmers shared a copper hypochlorite approach.">劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。</li>
-      <li data-zh="善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：" data-en="For five ways to use beneficial microbes well, see Mr. Hans Leong of Baba Gardening / Mr. Ganick:">善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：<br><a href="https://youtu.be/xVvzue0XMz4" target="_blank" rel="noopener">youtu.be/xVvzue0XMz4</a></li>
-      <li data-zh="后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。" data-en="Postscript: many companies now carry beneficial-microbe products — ask your usual agrochemical or fertiliser shop. LV LONG carries a Bacillus velezensis product; Bayer carries Bacillus amyloliquefaciens (Serenade SC).">后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。</li>
+      <li data-zh="特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。" data-en="Thanks to my uncle Mr. Hoo Yee Chow of TwinArrow/SNT, who arranged for his experienced colleague Andy Hoo to share this durian trunk moss solution." data-ms="Terima kasih kepada bapa saudara saya, En. Hoo Yee Chow dari TwinArrow/SNT, yang mengaturkan rakan sekerjanya yang berpengalaman, Andy Hoo, untuk berkongsi penyelesaian lumut batang durian ini.">特别感谢 TwinArrow／SNT 双箭肥料·先利德 的代表、我的小叔胡一群，安排他经验丰富的同事 Andy Hoo 分享这个防治榴莲树青苔的方案。</li>
+      <li data-zh="劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。" data-en="Mr. Foh Tan of Focheng Ecopark, Raub, generously shared a 50% hydrogen peroxide approach; several other farmers shared a copper hypochlorite approach." data-ms="En. Foh Tan dari Focheng Ecopark, Raub, dengan murah hati berkongsi kaedah hidrogen peroksida 50%; beberapa pekebun lain berkongsi kaedah serbuk kuprum (copper hypochlorite).">劳勿佛诚生态园陈总无私分享 50% 双氧水兑水的青苔方案；另有几位农友分享铜粉（copper hypochlorite）方案。</li>
+      <li data-zh="善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：" data-en="For five ways to use beneficial microbes well, see Mr. Hans Leong of Baba Gardening / Mr. Ganick:" data-ms="Untuk lima cara menggunakan mikrob berfaedah dengan baik, tonton video En. Hans Leong dari Baba Gardening / Mr. Ganick:">善用益菌的 5 大方法，可参考 Baba Gardening／Mr. Ganick 代表 Mr. Hans Leong 的视频：<br><a href="https://youtu.be/xVvzue0XMz4" target="_blank" rel="noopener">youtu.be/xVvzue0XMz4</a></li>
+      <li data-zh="后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。" data-en="Postscript: many companies now carry beneficial-microbe products — ask your usual agrochemical or fertiliser shop. LV LONG carries a Bacillus velezensis product; Bayer carries Bacillus amyloliquefaciens (Serenade SC)." data-ms="Catatan: kini banyak syarikat menjual produk mikrob berfaedah — tanya kedai racun atau baja yang biasa anda kunjungi. LV LONG ada produk Bacillus velezensis; Bayer ada Bacillus amyloliquefaciens (Serenade SC).">后记：这几年很多公司都引进了益菌方案，可向你熟悉的农药／肥料店查询。例如绿陇有贝莱斯芽孢杆菌产品，拜耳（Bayer）有解淀粉芽孢杆菌（Serenade SC）。</li>
     </ul>
   </div>
 </section>
@@ -457,8 +466,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       <path stroke="#2C1E0E" d="M2 2.5h7m3 0h2m2 0h1m2 0h4m2 0h1m2 0h7m-33 1h1m5 0h1m1 0h2m2 0h1m5 0h1m2 0h3m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m1 0h7m1 0h1m1 0h3m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m1 0h1m2 0h1m2 0h1m4 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m4 0h1m1 0h1m1 0h1m1 0h1m1 0h2m3 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m3 0h1m1 0h2m1 0h1m2 0h3m3 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h1m3 0h4m2 0h2m-23 1h3m1 0h2m2 0h1m2 0h1m1 0h1m1 0h4m1 0h1m1 0h1m6 0h2m-32 1h2m1 0h2m2 0h3m3 0h1m4 0h3m1 0h2m2 0h2m1 0h2m1 0h1m-33 1h2m1 0h1m1 0h3m1 0h3m1 0h2m1 0h2m3 0h3m1 0h5m1 0h2m-32 1h1m1 0h3m4 0h4m2 0h1m3 0h1m2 0h3m1 0h1m1 0h1m2 0h1m-27 1h2m1 0h4m1 0h1m1 0h1m1 0h1m1 0h1m1 0h4m2 0h2m1 0h2m-32 1h2m1 0h2m1 0h4m2 0h3m3 0h1m1 0h1m2 0h1m2 0h1m2 0h2m-31 1h2m1 0h6m2 0h3m1 0h2m1 0h2m1 0h1m3 0h3m1 0h1m-30 1h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h4m1 0h6m-31 1h2m1 0h1m2 0h5m1 0h1m3 0h3m2 0h2m2 0h2m1 0h3m-31 1h1m1 0h1m1 0h2m1 0h3m2 0h1m1 0h3m1 0h1m1 0h1m2 0h2m1 0h1m1 0h2m1 0h2m-32 1h2m1 0h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h1m1 0h3m3 0h3m1 0h2m-31 1h2m1 0h2m3 0h4m1 0h2m1 0h1m1 0h2m1 0h2m2 0h1m1 0h1m2 0h2m-32 1h2m3 0h3m1 0h2m2 0h2m1 0h1m1 0h1m1 0h1m7 0h2m-31 1h1m1 0h1m1 0h2m1 0h5m1 0h1m3 0h5m1 0h4m2 0h2m1 0h1m-29 1h1m1 0h2m2 0h2m1 0h2m2 0h2m1 0h4m2 0h3m1 0h3m-32 1h1m1 0h1m3 0h1m1 0h1m1 0h4m2 0h1m5 0h1m2 0h3m-29 1h1m2 0h1m1 0h2m2 0h1m1 0h1m1 0h1m3 0h2m1 0h1m1 0h1m1 0h5m2 0h2m-25 1h2m2 0h2m1 0h1m3 0h1m1 0h1m1 0h2m3 0h2m-30 1h7m2 0h1m2 0h1m1 0h2m2 0h3m2 0h2m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h6m1 0h1m3 0h6m3 0h3m-31 1h1m1 0h3m1 0h1m5 0h1m1 0h2m3 0h1m1 0h8m1 0h2m-32 1h1m1 0h3m1 0h1m1 0h1m8 0h2m1 0h3m4 0h1m1 0h4m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h4m1 0h3m3 0h6m-28 1h1m5 0h1m1 0h4m1 0h2m2 0h1m1 0h2m1 0h7m3 0h1m-33 1h7m2 0h1m1 0h1m2 0h2m3 0h1m1 0h1m1 0h1m4 0h1m1 0h1"/>
     </svg>
     <div class="sharetxt">
-      <b data-zh="分享这个 App" data-en="Share this app">分享这个 App</b>
-      <span data-zh="扫码打开，可安装到手机主屏幕，离线也能用。" data-en="Scan to open. Installs to the home screen and works offline.">扫码打开，可安装到手机主屏幕，离线也能用。</span>
+      <b data-zh="分享这个 App" data-en="Share this app" data-ms="Kongsi aplikasi ini">分享这个 App</b>
+      <span data-zh="扫码打开，可安装到手机主屏幕，离线也能用。" data-en="Scan to open. Installs to the home screen and works offline." data-ms="Imbas untuk buka. Boleh dipasang pada skrin utama dan berfungsi tanpa Internet.">扫码打开，可安装到手机主屏幕，离线也能用。</span>
       <a href="https://stanleywoosweeleong.github.io/embrew/" target="_blank" rel="noopener">stanleywoosweeleong.github.io/embrew/</a>
     </div>
   </div>
@@ -468,7 +477,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 <script>
 "use strict";
-var CACHE_VERSION = "embrew-v1.6.0-20260804";
+var CACHE_VERSION = "embrew-v1.7.0-20261114";
 var NS = "embrew.";
 
 /* ── storage: real localStorage where allowed, memory fallback otherwise ── */
@@ -484,56 +493,71 @@ var store = {
   }
 };
 
-var LANG = store.get("lang") || "zh";
-var T = function(zh,en){ return LANG === "zh" ? zh : en; };
+var LANGS = { zh:"zh-Hans", en:"en", ms:"ms" };
+var LANG = store.get("lang");
+if (!LANGS[LANG]) LANG = "zh";
+var T = function(zh,en,ms){ return LANG === "zh" ? zh : (LANG === "ms" ? ms : en); };
 
 /* ── recipe: per 200 L tank (from the source article) ── */
 var BASE = 200;
 var RECIPE = [
-  { key:"mol",  zh:"SNT 特级优质糖蜜", en:"SNT Super Premium Molasses", subZh:"农业级", subEn:"agriculture grade", per:15, unit:"kg" },
-  { key:"flr",  zh:"面粉", en:"Flour", subZh:"不可含氯", subEn:"must be chlorine-free", per:10, unit:"kg" },
-  { key:"azo",  zh:"火山矿粉", en:"SNT Azomite", subZh:"矿物微量元素粉", subEn:"volcanic rock dust", per:1, unit:"kg" },
-  { key:"pro",  zh:"SNT 超级益生菌", en:"SNT Super Probiotein Plus", subZh:"植物与土壤增强剂（微生物肥料）", subEn:"plant & soil booster (microbial)", per:1, unit:"L" }
+  { key:"mol",  zh:"SNT 特级优质糖蜜", en:"SNT Super Premium Molasses", subZh:"农业级", ms:"SNT Super Premium Molasses", subEn:"agriculture grade", subMs:"gred pertanian", per:15, unit:"kg" },
+  { key:"flr",  zh:"面粉", en:"Flour", subZh:"不可含氯", ms:"Tepung", subEn:"must be chlorine-free", subMs:"mesti bebas klorin", per:10, unit:"kg" },
+  { key:"azo",  zh:"火山矿粉", en:"SNT Azomite", subZh:"矿物微量元素粉", ms:"SNT Azomite", subEn:"volcanic rock dust", subMs:"serbuk batu gunung berapi", per:1, unit:"kg" },
+  { key:"pro",  zh:"SNT 超级益生菌", en:"SNT Super Probiotein Plus", subZh:"植物与土壤增强剂（微生物肥料）", ms:"SNT Super Probiotein Plus", subEn:"plant & soil booster (microbial)", subMs:"penggalak tanaman & tanah (mikrob)", per:1, unit:"L" }
 ];
 
 var SIZES = [100,200,400,1000];
 var USES = [
-  { key:"soil", zh:"土壤处理", en:"Soil treatment", ratio:20, disp:"1 : 20",
-    noteZh:"每 1 公升发酵液配 20 公升清水。", noteEn:"1 L of brew to every 20 L of water." },
-  { key:"area", zh:"大面积叶面／淋施", en:"Large area · foliar / drench", ratio:null, disp:"30–40 : 1000",
+  { key:"soil", zh:"土壤处理", en:"Soil treatment", ms:"Rawatan tanah", ratio:20, disp:"1 : 20",
+    noteZh:"每 1 公升发酵液配 20 公升清水。", noteEn:"1 L of brew to every 20 L of water.",
+    noteMs:"1 L cecair tapaian untuk setiap 20 L air." },
+  { key:"area", zh:"大面积叶面／淋施", en:"Large area · foliar / drench", ms:"Kawasan luas · daun / siraman", ratio:null, disp:"30–40 : 1000",
     noteZh:"大面积作业用：叶面喷施或土壤淋施，每 1000 公升清水配 30–40 公升发酵液。",
-    noteEn:"For working large areas — foliar spraying or soil drenching. 30–40 L of brew per 1000 L of water." },
-  { key:"moss", zh:"杀青苔", en:"Moss control", ratio:1, disp:"1 : 1",
-    noteZh:"1:1 使用，喷树干青苔。", noteEn:"Mixed 1:1, sprayed on mossy trunks." }
+    noteEn:"For working large areas — foliar spraying or soil drenching. 30–40 L of brew per 1000 L of water.",
+    noteMs:"Untuk kawasan luas — semburan daun atau siraman tanah. 30–40 L cecair tapaian bagi setiap 1000 L air." },
+  { key:"moss", zh:"杀青苔", en:"Moss control", ms:"Kawalan lumut", ratio:1, disp:"1 : 1",
+    noteZh:"1:1 使用，喷树干青苔。", noteEn:"Mixed 1:1, sprayed on mossy trunks.",
+    noteMs:"Campur 1:1, sembur pada batang berlumut." }
 ];
 
 var STEPS = [
   { id:"A", fill:50,
     zh:"糖蜜 + 水到半桶", en:"Molasses, then water to half full",
+    ms:"Molases, kemudian air hingga separuh",
     bodyZh:"先加糖蜜，加清水到桶约半满，搅拌到糖蜜完全溶解。",
     bodyEn:"Add the molasses, fill with water to about half the tank, and stir until it is fully dissolved.",
-    tipZh:"1 桶糖蜜＝30 公斤。", tipEn:"One container of molasses = 30 kg." },
+    bodyMs:"Masukkan molases, isi air hingga kira-kira separuh tong, dan kacau sehingga larut sepenuhnya.",
+    tipZh:"1 桶糖蜜＝30 公斤。", tipEn:"One container of molasses = 30 kg.", tipMs:"Satu tong molases = 30 kg." },
   { id:"B", fill:55,
-    zh:"面粉", en:"Flour",
+    zh:"面粉", en:"Flour", ms:"Tepung",
     bodyZh:"分批加入面粉，每批之间搅拌均匀，直到全部加完。",
     bodyEn:"Add the flour in batches, stirring well between each batch until it is all in.",
-    tipZh:"", tipEn:"" },
+    bodyMs:"Masukkan tepung sedikit demi sedikit, kacau rata setiap kali sehingga semuanya habis dimasukkan.",
+    tipZh:"", tipEn:"", tipMs:"" },
   { id:"C", fill:57,
-    zh:"火山矿粉", en:"Azomite",
+    zh:"火山矿粉", en:"Azomite", ms:"Azomite",
     bodyZh:"加入火山矿粉，搅拌均匀。",
     bodyEn:"Add the Azomite and mix well.",
-    tipZh:"", tipEn:"" },
+    bodyMs:"Masukkan Azomite dan kacau rata.",
+    tipZh:"", tipEn:"", tipMs:"" },
   { id:"D", fill:59,
     zh:"益菌", en:"The microbes",
+    ms:"Mikrob",
     bodyZh:"最后加入超级益生菌。工具必须干净，不要用受污染的容器，最好直接从原装瓶倒入。",
     bodyEn:"Add the Super Probiotein Plus last. Utensils must be clean — no contaminated containers. Pour straight from the original bottle if you can.",
-    tipZh:"用自来水的话，这一步之前要先除氯。", tipEn:"On tap water, de-chlorinate before this step." },
+    bodyMs:"Masukkan Super Probiotein Plus paling akhir. Peralatan mesti bersih — jangan guna bekas yang tercemar. Sebaik-baiknya tuang terus dari botol asal.",
+    tipZh:"用自来水的话，这一步之前要先除氯。", tipEn:"On tap water, de-chlorinate before this step.",
+    tipMs:"Jika guna air paip, nyahklorin sebelum langkah ini." },
   { id:"E", fill:80,
     zh:"加水到 80%，开盖发酵", en:"Top up to 80%, lid open",
+    ms:"Tambah air hingga 80%, penutup terbuka",
     bodyZh:"继续加水到桶约 80% 满，盖子打开，开始发酵。",
     bodyEn:"Keep adding water until the tank is about 80% full, leave the lid open, and start the ferment.",
+    bodyMs:"Teruskan menambah air sehingga tong kira-kira 80% penuh, biarkan penutup terbuka, dan mulakan penapaian.",
     tipZh:"盖子要开，但一定要罩上细孔纱网，孔越细越好。不然苍蝇会飞进去产卵，几天后液面浮满蛆虫，到时候连搅拌都下不了手。",
-    tipEn:"Lid open, but cover the tank with fine mesh netting — the finer the weave the better. Otherwise flies get in and lay eggs, and a few days later the surface is crawling with maggots and you won't want to go near it to stir." }
+    tipEn:"Lid open, but cover the tank with fine mesh netting — the finer the weave the better. Otherwise flies get in and lay eggs, and a few days later the surface is crawling with maggots and you won't want to go near it to stir.",
+    tipMs:"Penutup terbuka, tetapi tutup tong dengan jaring halus — lebih halus lebih baik. Jika tidak, lalat masuk dan bertelur, dan beberapa hari kemudian permukaannya penuh ulat sehingga anda tidak sanggup mendekatinya untuk mengacau." }
 ];
 
 var $ = function(s){ return document.querySelector(s); };
@@ -567,9 +591,9 @@ function renderMix(){
   RECIPE.forEach(function(r){
     var li = el("li");
     var nm = el("span","mixname");
-    nm.textContent = T(r.zh, r.en);
+    nm.textContent = T(r.zh, r.en, r.ms);
     var i = el("i");
-    i.textContent = T(r.subZh, r.subEn);
+    i.textContent = T(r.subZh, r.subEn, r.subMs);
     nm.appendChild(i);
     var q = el("span","qty");
     q.textContent = fmt(r.per * f);
@@ -585,7 +609,8 @@ function renderMix(){
   var drums = Math.round(mols / 30 * 100) / 100;
   $("#packnote").textContent = T(
     "面粉约 " + fmt(packs) + " 包（1 公斤／包）；糖蜜约 " + fmt(drums) + " 桶（30 公斤／桶）。桶装 80% 即约 " + fmt(tank*0.8) + " 公升液体。",
-    "About " + fmt(packs) + " packs of flour (1 kg each) and " + fmt(drums) + " containers of molasses (30 kg each). Filled to 80%, the tank holds roughly " + fmt(tank*0.8) + " L."
+    "About " + fmt(packs) + " packs of flour (1 kg each) and " + fmt(drums) + " containers of molasses (30 kg each). Filled to 80%, the tank holds roughly " + fmt(tank*0.8) + " L.",
+    "Kira-kira " + fmt(packs) + " pek tepung (1 kg sepek) dan " + fmt(drums) + " tong molases (30 kg setong). Diisi hingga 80%, tong memuatkan kira-kira " + fmt(tank*0.8) + " L."
   );
   renderSteps();
 }
@@ -597,7 +622,7 @@ function renderSizes(){
   SIZES.concat([0]).forEach(function(s){
     var b = el("button","chip");
     b.type = "button";
-    b.textContent = s === 0 ? T("自定义","Custom") : s + " L";
+    b.textContent = s === 0 ? T("自定义","Custom","Lain-lain") : s + " L";
     b.setAttribute("aria-pressed", st.size === s ? "true" : "false");
     b.onclick = function(){
       st.size = s; store.set("size", s);
@@ -612,10 +637,10 @@ function renderSizes(){
 function renderWater(){
   var box = $("#water");
   box.innerHTML = "";
-  [["rain", "雨水／河水", "Rain / river"], ["tap", "自来水", "Tap water"]].forEach(function(o){
+  [["rain", "雨水／河水", "Rain / river", "Air hujan / sungai"], ["tap", "自来水", "Tap water", "Air paip"]].forEach(function(o){
     var b = el("button","chip");
     b.type = "button";
-    b.textContent = T(o[1], o[2]);
+    b.textContent = T(o[1], o[2], o[3]);
     b.setAttribute("aria-pressed", st.water === o[0] ? "true" : "false");
     b.onclick = function(){ st.water = o[0]; store.set("water", o[0]); renderWater(); };
     box.appendChild(b);
@@ -629,7 +654,7 @@ function renderUses(){
   USES.forEach(function(u){
     var b = el("button","chip");
     b.type = "button";
-    b.textContent = T(u.zh, u.en);
+    b.textContent = T(u.zh, u.en, u.ms);
     b.setAttribute("aria-pressed", st.use === u.key ? "true" : "false");
     b.onclick = function(){ st.use = u.key; store.set("use", u.key); renderUses(); renderDilute(); };
     box.appendChild(b);
@@ -662,25 +687,27 @@ function renderSteps(){
     if (s.id === "B") amount = fmt(10*f) + " kg · ";
     if (s.id === "C") amount = fmt(1*f) + " kg · ";
     if (s.id === "D") amount = fmt(1*f) + " L · ";
-    h.textContent = amount + T(s.zh, s.en);
+    h.textContent = amount + T(s.zh, s.en, s.ms);
     var p = el("p");
-    p.textContent = T(s.bodyZh, s.bodyEn);
+    p.textContent = T(s.bodyZh, s.bodyEn, s.bodyMs);
     body.appendChild(h); body.appendChild(p);
 
-    var tipZh = s.tipZh, tipEn = s.tipEn;
+    var tipZh = s.tipZh, tipEn = s.tipEn, tipMs = s.tipMs;
     if (s.id === "B"){
       if (tank >= 400){
         tipZh = "桶够大（≥400 公升），10 公斤面粉可以一次倒完再搅拌。";
         tipEn = "The tank is large enough (≥400 L) — pour all the flour in at once, then stir.";
+        tipMs = "Tong cukup besar (≥400 L) — tuang semua tepung sekali gus, kemudian kacau.";
       } else {
         tipZh = "每次加 2 包（2 公斤），搅拌后再加下一批，比较好搅也不结块。";
         tipEn = "Add 2 packs (2 kg) at a time and stir before the next batch — easier to mix and it stops clumping.";
+        tipMs = "Masukkan 2 pek (2 kg) setiap kali dan kacau sebelum menambah lagi — lebih mudah dikacau dan tidak berketul.";
       }
     }
-    if (s.id === "D" && st.water !== "tap"){ tipZh = ""; tipEn = ""; }
-    if (T(tipZh, tipEn)){
+    if (s.id === "D" && st.water !== "tap"){ tipZh = ""; tipEn = ""; tipMs = ""; }
+    if (T(tipZh, tipEn, tipMs)){
       var t = el("p","tip");
-      t.textContent = T(tipZh, tipEn);
+      t.textContent = T(tipZh, tipEn, tipMs);
       body.appendChild(t);
     }
     d.appendChild(tk); d.appendChild(body);
@@ -731,30 +758,30 @@ function renderFerment(){
 
   if (d === null){
     numEl.textContent = "—";
-    stEl.textContent = T("还没开始", "Not started");
-    hintEl.textContent = T("填入开始日期，就会算天数。", "Set the start date to begin counting.");
+    stEl.textContent = T("还没开始", "Not started", "Belum bermula");
+    hintEl.textContent = T("填入开始日期，就会算天数。", "Set the start date to begin counting.", "Tetapkan tarikh mula untuk mula mengira.");
     bar.querySelector("i").style.width = "0%";
     bar.classList.remove("ready");
   } else if (d < 0){
     numEl.textContent = "—";
-    stEl.textContent = T("日期在未来", "Date is in the future");
-    hintEl.textContent = T("请检查开始日期。", "Check the start date.");
+    stEl.textContent = T("日期在未来", "Date is in the future", "Tarikh pada masa depan");
+    hintEl.textContent = T("请检查开始日期。", "Check the start date.", "Semak tarikh mula.");
     bar.querySelector("i").style.width = "0%";
     bar.classList.remove("ready");
   } else {
     numEl.textContent = String(d);
     if (d < 10){
       if (d === 0){
-        stEl.textContent = T("第 0 天 · 配制当天", "Day 0 · mixing day");
-        hintEl.textContent = T("10 天后可用。", "Ready in 10 days.");
+        stEl.textContent = T("第 0 天 · 配制当天", "Day 0 · mixing day", "Hari 0 · hari bancuhan");
+        hintEl.textContent = T("10 天后可用。", "Ready in 10 days.", "Sedia dalam 10 hari.");
       } else {
-        stEl.textContent = T("第 " + d + " 天 · 发酵中", "Day " + d + " · fermenting");
-        hintEl.textContent = T("还有 " + (10-d) + " 天可用。", (10-d) + " days until it is ready.");
+        stEl.textContent = T("第 " + d + " 天 · 发酵中", "Day " + d + " · fermenting", "Hari " + d + " · sedang menapai");
+        hintEl.textContent = T("还有 " + (10-d) + " 天可用。", (10-d) + " days until it is ready.", (10-d) + " hari lagi sebelum sedia.");
       }
       bar.classList.remove("ready");
     } else {
-      stEl.textContent = T("可以用了", "Ready to use");
-      hintEl.textContent = T("第 10 天起即可使用；继续每天搅拌，pH 会慢慢回升。", "Usable from day 10. Keep stirring daily and the pH keeps climbing.");
+      stEl.textContent = T("可以用了", "Ready to use", "Sedia digunakan");
+      hintEl.textContent = T("第 10 天起即可使用；继续每天搅拌，pH 会慢慢回升。", "Usable from day 10. Keep stirring daily and the pH keeps climbing.", "Boleh digunakan mulai hari ke-10. Teruskan mengacau setiap hari dan pH akan terus naik.");
       bar.classList.add("ready");
     }
     bar.querySelector("i").style.width = Math.min(100, d/10*100) + "%";
@@ -771,7 +798,7 @@ function renderFerment(){
       var b = el("button", "stir" + (on ? " on" : "") + (future ? " future" : ""));
       b.type = "button";
       b.textContent = day;
-      b.setAttribute("aria-label", T("第 " + day + " 天搅拌", "Day " + day + " stir"));
+      b.setAttribute("aria-label", T("第 " + day + " 天搅拌", "Day " + day + " stir", "Kacauan hari " + day));
       b.disabled = future;
       b.onclick = function(){
         var k = st.stirs.indexOf(day);
@@ -790,7 +817,7 @@ function renderDilute(){
   var u = USES.filter(function(x){ return x.key === st.use; })[0];
   var w = st.vol > 0 ? st.vol : 0;
   var bo = $("#brewOut"), wo = $("#waterOut"), to = $("#totalOut");
-  var unit = T(" 公升", " L");
+  var unit = T(" 公升", " L", " L");
 
   function q(node, val){
     node.textContent = val;
@@ -808,17 +835,20 @@ function renderDilute(){
     to.textContent = ""; q(to, fmt(w + b));
   }
   $("#ratioOut").textContent = u.disp;
-  $("#useNote").textContent = T(u.noteZh, u.noteEn);
+  $("#useNote").textContent = T(u.noteZh, u.noteEn, u.noteMs);
 }
 
 /* ── language ── */
 function applyLang(){
-  document.documentElement.lang = LANG === "zh" ? "zh-Hans" : "en";
-  $("#lang").textContent = LANG === "zh" ? "EN" : "中文";
+  document.documentElement.lang = LANGS[LANG];
+  var btns = document.querySelectorAll("#langs .langbtn");
+  for (var j = 0; j < btns.length; j++){
+    btns[j].setAttribute("aria-pressed", btns[j].getAttribute("data-lang") === LANG ? "true" : "false");
+  }
   var nodes = document.querySelectorAll("[data-zh]");
   for (var i = 0; i < nodes.length; i++){
     var n = nodes[i];
-    var val = LANG === "zh" ? n.getAttribute("data-zh") : n.getAttribute("data-en");
+    var val = n.getAttribute("data-" + LANG);
     if (n.querySelector("a")){
       n.childNodes[0].nodeValue = val;
     } else if (val.indexOf("<") > -1){
@@ -832,8 +862,10 @@ function applyLang(){
 }
 
 /* ── wire ── */
-$("#lang").onclick = function(){
-  LANG = (LANG === "zh") ? "en" : "zh";
+$("#langs").onclick = function(e){
+  var l = e.target && e.target.getAttribute && e.target.getAttribute("data-lang");
+  if (!LANGS[l] || l === LANG) return;
+  LANG = l;
   store.set("lang", LANG);
   applyLang();
 };

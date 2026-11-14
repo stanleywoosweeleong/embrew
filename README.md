@@ -1,6 +1,6 @@
 # 益菌坊 EM Brew Lab
 
-Offline-first bilingual PWA for brewing effective microbes — ingredient scaling,
+Offline-first trilingual (中文 / English / Bahasa Melayu) PWA for brewing effective microbes — ingredient scaling,
 fermentation tracking and dilution calculation.
 
 ## Deploy on GitHub Pages
