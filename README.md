@@ -19,9 +19,15 @@ All paths are relative (`./`), so it works at a project-page subpath without cha
 
 ## After every change
 
-Bump `CACHE_VERSION` in **both** `sw.js` and the `<script>` block in `index.html`,
-then push. The old cache is deleted on activate and the new build is live on the
-next launch.
+Just push. There is no version number to bump.
+
+The service worker opens the app instantly from its saved copy, then checks the
+server on every launch and whenever the app returns to the foreground. If
+`index.html` has changed, the new copy is saved and a toast offers a refresh;
+it is also live on the next launch regardless. The footer shows the date of the
+copy currently running.
+
+GitHub Pages can take a minute or two to publish a push.
 
 ```
 node --check sw.js

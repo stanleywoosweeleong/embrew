@@ -1,13 +1,17 @@
 /* 益菌坊 EM Brew Lab — service worker
-   Bump CACHE_VERSION on every deploy. Old caches are deleted on activate. */
+
+   No version number to bump. The app opens instantly from the cache, then the
+   page asks this worker to "check": every shell file is re-fetched, the cache
+   is refreshed, and if index.html came back different the page is told so it
+   can show its "new version" toast. */
 "use strict";
 
 var CACHE_PREFIX = "embrew-";
-var CACHE_VERSION = "embrew-v1.7.1-20261114";
+var CACHE = "embrew-shell";
+var INDEX = "./index.html";
 
 var SHELL = [
-  "./",
-  "./index.html",
+  INDEX,
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -17,26 +21,54 @@ var SHELL = [
   "./icons/favicon-16.png"
 ];
 
-/* install: precache the shell, but never fail the whole install
-   because one optional file 404'd */
+function sameBytes(a, b){
+  if (a.byteLength !== b.byteLength) return false;
+  var x = new Uint8Array(a), y = new Uint8Array(b);
+  for (var i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
+  return true;
+}
+
+/* Fetch one file past the HTTP cache and store it. Resolves true only when a
+   copy was already cached and the new one differs. Errors and non-200
+   responses leave the cache alone. */
+function refresh(url){
+  return fetch(url, { cache: "no-cache" }).then(function(res){
+    if (!res || !res.ok) return false;
+    return caches.open(CACHE).then(function(c){
+      return c.match(url).then(function(old){
+        return Promise.all([
+          old ? old.arrayBuffer() : null,
+          res.clone().arrayBuffer()
+        ]).then(function(b){
+          var changed = !!b[0] && !sameBytes(b[0], b[1]);
+          return c.put(url, res).then(function(){ return changed; });
+        });
+      });
+    });
+  }).catch(function(){ return false; });
+}
+
+function refreshShell(){
+  return Promise.all(SHELL.map(refresh)).then(function(changed){
+    return changed[SHELL.indexOf(INDEX)];
+  });
+}
+
+/* install: precache the shell (a missing optional file never fails the
+   install) and take over straight away — the cache name never changes, so a
+   new worker is always safe to activate. */
 self.addEventListener("install", function(e){
-  e.waitUntil(
-    caches.open(CACHE_VERSION).then(function(c){
-      return Promise.all(SHELL.map(function(url){
-        return c.add(url).catch(function(){ /* skip missing file */ });
-      }));
-    })
-  );
+  e.waitUntil(refreshShell().then(function(){ return self.skipWaiting(); }));
 });
 
-/* activate: drop this app's older caches, then take control.
+/* activate: drop this app's older, versioned caches, then take control.
    Cache Storage is shared by everything on the origin (all project pages on
    <user>.github.io), so only caches carrying our own prefix are touched. */
 self.addEventListener("activate", function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
       return Promise.all(keys.map(function(k){
-        return (k.indexOf(CACHE_PREFIX) === 0 && k !== CACHE_VERSION) ? caches.delete(k) : null;
+        return (k.indexOf(CACHE_PREFIX) === 0 && k !== CACHE) ? caches.delete(k) : null;
       }));
     }).then(function(){
       return self.clients.claim();
@@ -45,10 +77,10 @@ self.addEventListener("activate", function(e){
 });
 
 /* fetch:
-   - navigations  → network first, fall back to the cached shell (offline,
-                    or the server answered with an error page)
+   - navigations  → the cached app, instantly; network only if nothing is cached
    - same-origin  → cache first, then network, and cache what comes back
-   - cross-origin → left alone */
+   - cross-origin → left alone
+   Freshness is handled by the "check" message below, not here. */
 self.addEventListener("fetch", function(e){
   var req = e.request;
   if (req.method !== "GET") return;
@@ -59,16 +91,15 @@ self.addEventListener("fetch", function(e){
 
   if (req.mode === "navigate"){
     e.respondWith(
-      fetch(req).then(function(res){
-        if (res.ok){
-          var copy = res.clone();
-          caches.open(CACHE_VERSION).then(function(c){ c.put("./index.html", copy); });
+      caches.match(INDEX).then(function(hit){
+        if (hit) return hit;
+        return fetch(req).then(function(res){
+          if (res.ok){
+            var copy = res.clone();
+            caches.open(CACHE).then(function(c){ c.put(INDEX, copy); });
+          }
           return res;
-        }
-        /* 404 / 503 etc: never cache it; show the saved app if there is one */
-        return cachedShell().then(function(r){ return r || res; });
-      }).catch(function(){
-        return cachedShell();
+        });
       })
     );
     return;
@@ -80,7 +111,7 @@ self.addEventListener("fetch", function(e){
       return fetch(req).then(function(res){
         if (res && res.status === 200 && res.type === "basic"){
           var copy = res.clone();
-          caches.open(CACHE_VERSION).then(function(c){ c.put(req, copy); });
+          caches.open(CACHE).then(function(c){ c.put(req, copy); });
         }
         return res;
       });
@@ -88,13 +119,16 @@ self.addEventListener("fetch", function(e){
   );
 });
 
-function cachedShell(){
-  return caches.match("./index.html").then(function(r){
-    return r || caches.match("./");
-  });
-}
-
-/* let the page trigger an immediate takeover if it ever wants to */
+/* "check" from a page: refresh the shell and, if index.html changed, tell
+   every open window so each can offer a reload. */
 self.addEventListener("message", function(e){
-  if (e.data === "skipWaiting") self.skipWaiting();
+  if (e.data !== "check") return;
+  e.waitUntil(
+    refreshShell().then(function(changed){
+      if (!changed) return;
+      return self.clients.matchAll({ type: "window" }).then(function(list){
+        list.forEach(function(c){ c.postMessage("updated"); });
+      });
+    })
+  );
 });

@@ -259,6 +259,23 @@ footer .v{font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-top:
   font-family:var(--mono);color:var(--ink);word-break:break-all;text-decoration:none;
   border-bottom:2px solid var(--gold)}
 @media (max-width:380px){.share{gap:12px;padding:12px}.share svg{width:88px;height:88px}}
+.toast{
+  position:fixed;z-index:10;left:50%;transform:translateX(-50%);
+  bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  width:calc(100% - 32px);max-width:420px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--molasses);color:var(--wheat);
+  border:1.5px solid var(--gold);border-radius:var(--r);
+  padding:10px 10px 10px 15px;box-shadow:0 8px 24px rgba(30,20,9,.35);
+  font-size:14px;font-weight:700;line-height:1.35;
+  animation:toastin .25s ease-out;
+}
+.toast[hidden]{display:none}
+.toast > span{flex:1;min-width:0}
+.toast button{flex:none;border:0;border-radius:9px;cursor:pointer;font:800 14px/1 var(--sans)}
+#toastgo{background:linear-gradient(180deg,var(--gold-lite),var(--gold));color:#2A1B08;padding:10px 14px}
+#toastx{background:transparent;color:rgba(239,228,204,.75);padding:10px 8px;font-size:16px}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .bub{animation:rise 3.4s linear infinite}
 @keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.85}100%{transform:translateY(-46px);opacity:0}}
@@ -479,9 +496,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </footer>
 </main>
 
+<div class="toast" id="toast" role="status" aria-live="polite" hidden>
+  <span data-zh="已下载新版本" data-en="A new version is ready" data-ms="Versi baharu sudah sedia">已下载新版本</span>
+  <button type="button" id="toastgo" data-zh="刷新" data-en="Refresh" data-ms="Muat semula">刷新</button>
+  <button type="button" id="toastx" aria-label="✕">✕</button>
+</div>
+
 <script>
 "use strict";
-var CACHE_VERSION = "embrew-v1.7.1-20261114";
 var NS = "embrew.";
 
 /* ── storage: real localStorage where allowed, memory fallback otherwise ── */
@@ -925,24 +947,39 @@ $("#start").onchange = function(){
   store.set("start", this.value);
   renderFerment();
 };
-$("#ver").textContent = CACHE_VERSION;
+/* build stamp = when this copy of the page was last changed on the server */
+(function(){
+  var d = new Date(document.lastModified);
+  if (isNaN(d.getTime())) return;
+  var p = function(n){ return (n < 10 ? "0" : "") + n; };
+  $("#ver").textContent = "embrew · " + d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()) +
+    " " + p(d.getHours()) + ":" + p(d.getMinutes());
+})();
 
 applyLang();
 
-/* ── offline: real service worker ── */
+/* ── offline + updates ──
+   The service worker serves the saved copy instantly. On every launch, and
+   whenever the app comes back to the foreground, we ask it to check the
+   server; if index.html has changed it replies "updated" and we show a toast. */
+$("#toastgo").onclick = function(){ location.reload(); };
+$("#toastx").onclick = function(){ $("#toast").hidden = true; };
+
 if ("serviceWorker" in navigator && location.protocol !== "file:"){
-  window.addEventListener("load", function(){
-    navigator.serviceWorker.register("./sw.js").then(function(reg){
-      reg.addEventListener("updatefound", function(){
-        var w = reg.installing;
-        if (!w) return;
-        w.addEventListener("statechange", function(){
-          if (w.state === "installed" && navigator.serviceWorker.controller){
-            console.log("EM Brew Lab: update installed, active on next launch.");
-          }
-        });
-      });
+  var askForUpdate = function(){
+    if (navigator.onLine === false) return;
+    navigator.serviceWorker.ready.then(function(reg){
+      if (reg.active) reg.active.postMessage("check");
     }).catch(function(){});
+  };
+  navigator.serviceWorker.addEventListener("message", function(e){
+    if (e.data === "updated") $("#toast").hidden = false;
+  });
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("./sw.js").then(askForUpdate).catch(function(){});
+  });
+  document.addEventListener("visibilitychange", function(){
+    if (document.visibilityState === "visible") askForUpdate();
   });
 }
 </script>
