@@ -259,6 +259,29 @@ footer .v{font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-top:
   font-family:var(--mono);color:var(--ink);word-break:break-all;text-decoration:none;
   border-bottom:2px solid var(--gold)}
 @media (max-width:380px){.share{gap:12px;padding:12px}.share svg{width:88px;height:88px}}
+/* ── first-launch language picker ── */
+#langpick{
+  position:fixed;inset:0;z-index:20;overflow:auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:calc(24px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));
+  background-color:var(--wheat);
+  background-image:
+    repeating-linear-gradient(90deg,rgba(44,30,14,.035) 0 1px,transparent 1px 4px),
+    repeating-linear-gradient(0deg,rgba(44,30,14,.035) 0 1px,transparent 1px 4px);
+}
+#langpick[hidden]{display:none}
+#langpick img{width:84px;height:84px;border-radius:22px;box-shadow:0 6px 18px rgba(44,30,14,.25)}
+.lptitle{font-size:26px;font-weight:800;line-height:1.1;text-align:center;letter-spacing:-.02em;margin:0 0 8px}
+.lptitle span{display:block;font-size:12px;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--gold);margin-top:8px}
+#langpick button{
+  width:min(18rem,84vw);min-height:58px;border:2px solid rgba(44,30,14,.3);border-radius:16px;
+  background:var(--paper);color:var(--ink);font:800 19px/1 var(--sans);cursor:pointer;
+  transition:transform .15s,border-color .15s;
+}
+#langpick button:active{transform:scale(.97);border-color:var(--gold)}
+body.picking{overflow:hidden}
+
 .toast{
   position:fixed;z-index:10;left:50%;transform:translateX(-50%);
   bottom:calc(16px + env(safe-area-inset-bottom,0px));
@@ -496,6 +519,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </footer>
 </main>
 
+<!-- first-launch language picker (onboarding) -->
+<div id="langpick" role="dialog" aria-modal="true" aria-label="中文 · English · Bahasa Melayu" hidden>
+  <img src="./icons/icon-192.png" alt="">
+  <p class="lptitle">益菌坊<span>EM Brew Lab</span></p>
+  <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
+  <button type="button" data-lang="en" lang="en">English</button>
+  <button type="button" data-lang="ms" lang="ms">Bahasa Melayu</button>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite" hidden>
   <span data-zh="已下载新版本" data-en="A new version is ready" data-ms="Versi baharu sudah sedia">已下载新版本</span>
   <button type="button" id="toastgo" data-zh="刷新" data-en="Refresh" data-ms="Muat semula">刷新</button>
@@ -521,7 +553,8 @@ var store = {
 
 var LANGS = { zh:"zh-Hans", en:"en", ms:"ms" };
 var LANG = store.get("lang");
-if (!LANGS[LANG]) LANG = "zh";
+var FIRST_LAUNCH = !LANGS[LANG];   /* no saved choice yet → ask before showing the app */
+if (FIRST_LAUNCH) LANG = "zh";
 var T = function(zh,en,ms){ return LANG === "zh" ? zh : (LANG === "ms" ? ms : en); };
 
 /* ── recipe: per 200 L tank (from the source article) ── */
@@ -908,12 +941,30 @@ function applyLang(){
 }
 
 /* ── wire ── */
-$("#langs").onclick = function(e){
-  var l = e.target && e.target.getAttribute && e.target.getAttribute("data-lang");
-  if (!LANGS[l] || l === LANG) return;
+function setLang(l){
+  if (!LANGS[l]) return false;
+  var changed = (l !== LANG);
   LANG = l;
-  store.set("lang", LANG);
-  applyLang();
+  store.set("lang", LANG);       /* remembered until the user picks another */
+  if (changed) applyLang();
+  return true;
+}
+$("#langs").onclick = function(e){
+  setLang(e.target && e.target.getAttribute && e.target.getAttribute("data-lang"));
+};
+
+/* ── onboarding: choose a language on first launch ── */
+function showLangPick(on){
+  $("#langpick").hidden = !on;
+  document.body.classList.toggle("picking", on);
+  var bg = [$("header"), $("main")];
+  for (var i = 0; i < bg.length; i++) bg[i].inert = on;   /* keep focus inside the picker */
+}
+$("#langpick").onclick = function(e){
+  if (setLang(e.target && e.target.getAttribute && e.target.getAttribute("data-lang"))){
+    showLangPick(false);
+    window.scrollTo(0, 0);
+  }
 };
 $("#custom").value = st.custom;
 $("#custom").oninput = function(){
@@ -957,6 +1008,10 @@ $("#start").onchange = function(){
 })();
 
 applyLang();
+if (FIRST_LAUNCH){
+  showLangPick(true);
+  $("#langpick button").focus();
+}
 
 /* ── offline + updates ──
    The service worker serves the saved copy instantly. On every launch, and
