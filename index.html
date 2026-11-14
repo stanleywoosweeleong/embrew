@@ -270,6 +270,7 @@ footer .v{font-family:var(--mono);font-size:11px;letter-spacing:.1em;margin-top:
     repeating-linear-gradient(0deg,rgba(44,30,14,.035) 0 1px,transparent 1px 4px);
 }
 #langpick[hidden]{display:none}
+#langpick:focus{outline:0}
 #langpick img{width:84px;height:84px;border-radius:22px;box-shadow:0 6px 18px rgba(44,30,14,.25)}
 .lptitle{font-size:26px;font-weight:800;line-height:1.1;text-align:center;letter-spacing:-.02em;margin:0 0 8px}
 .lptitle span{display:block;font-size:12px;font-weight:700;letter-spacing:.22em;
@@ -520,7 +521,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 </main>
 
 <!-- first-launch language picker (onboarding) -->
-<div id="langpick" role="dialog" aria-modal="true" aria-label="中文 · English · Bahasa Melayu" hidden>
+<div id="langpick" role="dialog" aria-modal="true" aria-label="中文 · English · Bahasa Melayu" tabindex="-1" hidden>
   <img src="./icons/icon-192.png" alt="">
   <p class="lptitle">益菌坊<span>EM Brew Lab</span></p>
   <button type="button" data-lang="zh" lang="zh-Hans">中文</button>
@@ -1010,7 +1011,7 @@ $("#start").onchange = function(){
 applyLang();
 if (FIRST_LAUNCH){
   showLangPick(true);
-  $("#langpick button").focus();
+  $("#langpick").focus();   /* the dialog itself, so no language looks pre-selected */
 }
 
 /* ── offline + updates ──
