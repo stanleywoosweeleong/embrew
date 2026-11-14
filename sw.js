@@ -2,7 +2,8 @@
    Bump CACHE_VERSION on every deploy. Old caches are deleted on activate. */
 "use strict";
 
-var CACHE_VERSION = "embrew-v1.7.0-20261114";
+var CACHE_PREFIX = "embrew-";
+var CACHE_VERSION = "embrew-v1.7.1-20261114";
 
 var SHELL = [
   "./",
@@ -28,12 +29,14 @@ self.addEventListener("install", function(e){
   );
 });
 
-/* activate: drop every cache that isn't this version, then take control */
+/* activate: drop this app's older caches, then take control.
+   Cache Storage is shared by everything on the origin (all project pages on
+   <user>.github.io), so only caches carrying our own prefix are touched. */
 self.addEventListener("activate", function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
       return Promise.all(keys.map(function(k){
-        return k === CACHE_VERSION ? null : caches.delete(k);
+        return (k.indexOf(CACHE_PREFIX) === 0 && k !== CACHE_VERSION) ? caches.delete(k) : null;
       }));
     }).then(function(){
       return self.clients.claim();
@@ -42,7 +45,8 @@ self.addEventListener("activate", function(e){
 });
 
 /* fetch:
-   - navigations  → network first, fall back to the cached shell (offline)
+   - navigations  → network first, fall back to the cached shell (offline,
+                    or the server answered with an error page)
    - same-origin  → cache first, then network, and cache what comes back
    - cross-origin → left alone */
 self.addEventListener("fetch", function(e){
@@ -56,13 +60,15 @@ self.addEventListener("fetch", function(e){
   if (req.mode === "navigate"){
     e.respondWith(
       fetch(req).then(function(res){
-        var copy = res.clone();
-        caches.open(CACHE_VERSION).then(function(c){ c.put("./index.html", copy); });
-        return res;
+        if (res.ok){
+          var copy = res.clone();
+          caches.open(CACHE_VERSION).then(function(c){ c.put("./index.html", copy); });
+          return res;
+        }
+        /* 404 / 503 etc: never cache it; show the saved app if there is one */
+        return cachedShell().then(function(r){ return r || res; });
       }).catch(function(){
-        return caches.match("./index.html").then(function(r){
-          return r || caches.match("./");
-        });
+        return cachedShell();
       })
     );
     return;
@@ -81,6 +87,12 @@ self.addEventListener("fetch", function(e){
     })
   );
 });
+
+function cachedShell(){
+  return caches.match("./index.html").then(function(r){
+    return r || caches.match("./");
+  });
+}
 
 /* let the page trigger an immediate takeover if it ever wants to */
 self.addEventListener("message", function(e){

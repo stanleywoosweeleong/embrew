@@ -195,6 +195,9 @@ label.fld > span{display:block;font-size:12.5px;font-weight:700;letter-spacing:.
 .stir.on{background:linear-gradient(180deg,#4A3418,#2C1E0E);border-color:#2C1E0E;color:var(--wheat);
   box-shadow:inset 0 1px 0 rgba(239,228,204,.18)}
 .stir.future{background:var(--paper);border-color:var(--line);color:var(--stone);opacity:.45;cursor:not-allowed}
+#newbatch{display:block;width:100%;margin-top:14px;border:1.5px solid rgba(168,62,34,.45);border-radius:10px;
+  background:transparent;color:var(--rust);font:800 14px/1 var(--sans);padding:12px;cursor:pointer}
+#newbatch[hidden]{display:none}
 .phchart{width:100%;height:auto;display:block;margin-top:4px}
 
 /* ── results ────────────────────────── */
@@ -350,6 +353,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     <div class="bar" id="bar"><i style="width:0%"></i></div>
     <p class="note" data-zh="盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。" data-en="Lid open, under fine mesh netting to keep flies from laying eggs — this is an aerobic ferment. Stir at least 1 minute daily, then tap a square to log it." data-ms="Biarkan penutup terbuka, ditutup dengan jaring halus supaya lalat tidak bertelur — ini penapaian aerobik. Kacau sekurang-kurangnya 1 minit setiap hari, kemudian ketik petak untuk merekodkannya.">盖子要打开（罩上细孔纱网防苍蝇产卵）—— 这是好氧发酵。每天搅拌至少 1 分钟，点一下方格记录。</p>
     <div class="stirgrid" id="stirgrid"></div>
+    <button type="button" id="newbatch" hidden data-zh="开始新一批" data-en="New batch" data-ms="Kelompok baharu">开始新一批</button>
   </div>
 
   <div class="card">
@@ -477,7 +481,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 <script>
 "use strict";
-var CACHE_VERSION = "embrew-v1.7.0-20261114";
+var CACHE_VERSION = "embrew-v1.7.1-20261114";
 var NS = "embrew.";
 
 /* ── storage: real localStorage where allowed, memory fallback otherwise ── */
@@ -564,15 +568,34 @@ var $ = function(s){ return document.querySelector(s); };
 var el = function(t,c){ var e = document.createElement(t); if(c) e.className = c; return e; };
 
 /* ── state ── */
+/* stored values are untrusted: anything unreadable falls back to its default */
+function loadNum(k, def){
+  var v = parseFloat(store.get(k));
+  return (isFinite(v) && v > 0) ? v : def;
+}
+function loadList(k, ok){
+  var a;
+  try { a = JSON.parse(store.get(k) || "[]"); } catch(e){ return []; }
+  if (!Array.isArray(a)) return [];
+  return a.filter(function(x, i){ return ok(x) && a.indexOf(x) === i; });
+}
+function loadSize(){
+  var v = parseFloat(store.get("size"));   /* 0 = custom size, so no "|| default" */
+  return (v === 0 || SIZES.indexOf(v) > -1) ? v : 200;
+}
+function loadStart(){
+  var v = store.get("start") || "";
+  return (/^\d{4}-\d{2}-\d{2}$/.test(v) && !isNaN(new Date(v + "T00:00:00").getTime())) ? v : "";
+}
 var st = {
-  size: parseFloat(store.get("size")) || 200,
-  custom: parseFloat(store.get("custom")) || 200,
-  water: store.get("water") || "rain",
-  use: store.get("use") || "soil",
-  vol: parseFloat(store.get("vol")) || 20,
-  start: store.get("start") || "",
-  done: JSON.parse(store.get("done") || "[]"),
-  stirs: JSON.parse(store.get("stirs") || "[]")
+  size: loadSize(),
+  custom: loadNum("custom", 200),
+  water: store.get("water") === "tap" ? "tap" : "rain",
+  use: USES.some(function(u){ return u.key === store.get("use"); }) ? store.get("use") : "soil",
+  vol: loadNum("vol", 20),
+  start: loadStart(),
+  done: loadList("done", function(x){ return STEPS.some(function(s){ return s.id === x; }); }),
+  stirs: loadList("stirs", function(x){ return typeof x === "number" && x % 1 === 0 && x >= 0 && x <= 20; })
 };
 
 function fmt(n){
@@ -788,6 +811,7 @@ function renderFerment(){
   }
 
   $("#today").hidden = !!st.start;
+  $("#newbatch").hidden = !(st.start || st.done.length || st.stirs.length);
 
   var grid = $("#stirgrid");
   grid.innerHTML = "";
@@ -887,6 +911,14 @@ $("#today").onclick = function(){
   st.start = n.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (dd < 10 ? "0" : "") + dd;
   store.set("start", st.start);
   renderFerment();
+};
+$("#newbatch").onclick = function(){
+  if (!confirm(T("开始新一批？这一批的开始日期、加料步骤和搅拌记录都会清除。",
+                 "Start a new batch? This clears the current batch's start date, mixing steps and stirring log.",
+                 "Mulakan kelompok baharu? Tarikh mula, langkah bancuhan dan rekod kacauan kelompok ini akan dipadam."))) return;
+  st.start = ""; st.done = []; st.stirs = [];
+  store.set("start", ""); store.set("done", "[]"); store.set("stirs", "[]");
+  renderSteps(); renderFerment();
 };
 $("#start").onchange = function(){
   st.start = this.value;
